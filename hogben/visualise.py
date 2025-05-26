@@ -104,7 +104,7 @@ def scan_parameters(sample: BaseSample,
     for param in params:
         lb, ub = param.bounds.lb, param.bounds.ub
         old_value = param.value
-        param_range = np.linspace(lb, ub, 200)
+        param_range = np.linspace(lb, ub, 100)
         eigenvals = []
         for value in param_range:
             param.value = value
