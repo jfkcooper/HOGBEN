@@ -103,9 +103,6 @@ class SimulateReflectivity:
             self._run_experiment(*condition, polarised) for condition in self.angle_times
         ])
 
-        # filter zeros
-        simulation = simulation[:, (simulation[1] != 0)]
-
         # order by q
         simulation = simulation[:, np.argsort(simulation[0])]
 

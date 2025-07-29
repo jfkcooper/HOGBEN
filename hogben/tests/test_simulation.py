@@ -107,6 +107,25 @@ class TestSimulate:
 
             sim_not_in_pol._incident_flux_data(polarised=True)
 
+    def test_number_of_points(self, refnx_model):
+        """
+        Tests that the number of points generated in the
+        simulation is what we define (even when many are zero)
+        """
+        NPOINTS = 100
+        angle_times = [(0.3, NPOINTS, 10000)]
+        sim = SimulateReflectivity(refnx_model,
+                                   angle_times=angle_times).simulate()
+        assert len(sim[0]) == NPOINTS
+        angle_times = [(0.3, NPOINTS, 5)]
+        sim = SimulateReflectivity(refnx_model,
+                                   angle_times=angle_times).simulate()
+        assert len(sim[0]) == NPOINTS
+        angle_times = [(0.3, NPOINTS, 5), (2.0, NPOINTS, 50)]
+        sim = SimulateReflectivity(refnx_model,
+                                   angle_times=angle_times).simulate()
+        assert len(sim[0]) == NPOINTS * 2
+
     def test_reflectivity(self, refnx_model):
         """
         Checks that a refnx model reflectivity generated through

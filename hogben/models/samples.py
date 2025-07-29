@@ -410,6 +410,8 @@ class Sample(BaseSample):
         for structure in self.structures:
             model = refnx.reflect.ReflectModel(structure)
             data = SimulateReflectivity(model, angle_times).simulate()
+            # filter zeros as nested sampling doesn't deal with these well
+            data = data[:, (data[1] != 0)]
             objective = Objective(model, data)
             objectives.append(objective)
         global_objective = GlobalObjective(objectives)
