@@ -9,7 +9,7 @@
 * [kinetics.py](/hogben/kinetics.py) - Optimises and visualises the choice of measurement angle and contrast for the [DPPG](/hogben/results/DPPG_monolayer) monolayer model degrading over time.
 * [magnetism.py](/hogben/magnetism.py) - Optimises and visualises the sample design of the magnetic [YIG](/hogben/results/YIG_sample) sample.
 * [optimise.py](/hogben/optimise.py) - Contains code for optimising the choice of measurement angle(s), counting time(s), contrast(s) and underlayer(s).
-* [simulate.py](/hogben/simulate.py) - Contains code for simulating experiments using a [directbeam](/hogbendata/directbeams) file of incident neutron flux as a function of wavelength.
+* [simulate.py](/hogben/simulate.py) - Contains code for simulating experiments using a [directbeam](/hogben/data/directbeams) file of incident neutron flux as a function of wavelength.
 * [underlayers.py](/hogben/underlayers.py) - Optimises and visualises the choice of underlayer thickness(es) and SLD(s) for the [DMPC](/hogben/results/DMPC_bilayer) and [DPPC/RaLPS](/hogben/results/DPPC_RaLPS_bilayer) bilayer models.
 * [utils.py](/hogben/utils.py) - Contains miscellaneous code for calculating the Fisher information, nested sampling, and saving plots.
 * [visualise.py](/hogben/visualise.py) - Contains code for visualising the choice of measurement angle(s), counting time(s), contrast(s) and underlayer(s).
