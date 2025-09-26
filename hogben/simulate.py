@@ -156,7 +156,9 @@ class SimulateReflectivity:
 
         # Get the bin centres.
         q_binned = np.asarray(
-            [(q_bin_edges[i] + q_bin_edges[i + 1]) / 2 for i in range(points)])
+           [(q_bin_edges[i] + q_bin_edges[i + 1]) / 2 for i in range(points)])
+
+        # q_binned = np.asarray(0.5 * (q_bin_edges[:-1] + q_bin_edges[1:])) # TESTING
 
         r_model = self.reflectivity(q_binned)
 

@@ -379,3 +379,17 @@ def test_main_function(_mock_save_plot):
             sld_profile = os.path.join(save_path, subfolder, 'sld_profile.png')
             assert os.path.isfile(reflectivity_profile)
             assert os.path.isfile(sld_profile)
+
+def test_nested_sampling_call():
+    """
+    Tests that the call for nested sampling will result in dynesty being able to run
+    """
+    from hogben.models.bilayers import BilayerDMPC
+    bilayer = BilayerDMPC()
+    angle_times = [(0.7, 100, 10), (2.7, 100, 100)]
+    save_path = 'testable_path'
+    with patch('hogben.models.base.Sampler', autospec=True, return_value=True):
+        bilayer.nested_sampling([6.36, 6.36], angle_times, save_path, 'output_name')
+
+    assert True
+
