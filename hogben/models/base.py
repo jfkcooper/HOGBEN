@@ -8,7 +8,6 @@ import matplotlib.pyplot as plt
 
 import numpy as np
 
-
 import refnx.dataset
 import refnx.reflect
 import refnx.analysis
