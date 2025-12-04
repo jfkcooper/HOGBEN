@@ -324,6 +324,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             zmax = structure.slabs()[:,0].sum()+4*int(structure.slabs()[-1, 3])+10
             zsteps = 500
             ax.plot(*structure.sld_profile(np.linspace(zmin,zmax,zsteps)))
+            
         x_label = '$\mathregular{Distance\ (\AA)}$'
         y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
 
