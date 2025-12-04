@@ -258,7 +258,7 @@ def contrast_choice_single(sample: BaseLipid,
     fig = plt.figure()
     ax = fig.add_subplot(111)
     ax.plot(contrast_range, min_eigs)
-    x_label = '$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
+    x_label = r'$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
     ax.set_xlabel(x_label, fontsize=11, weight='bold')
     ax.set_ylabel('Minimum Eigenvalue', fontsize=11, weight='bold')
 
@@ -316,8 +316,8 @@ def contrast_choice_double(sample, contrast_range, angle_times, save_path):
     surface = ax.plot_trisurf(x, y, min_eigs, cmap='plasma')
     fig.colorbar(surface, fraction=0.046, pad=0.04)
 
-    x_label = '$\mathregular{Contrast \ 1 \ SLD \ (10^{-6} \AA^{-2})}$'
-    y_label = '$\mathregular{Contrast \ 2 \ SLD \ (10^{-6} \AA^{-2})}$'
+    x_label = r'$\mathregular{Contrast \ 1 \ SLD \ (10^{-6} \AA^{-2})}$'
+    y_label = r'$\mathregular{Contrast \ 2 \ SLD \ (10^{-6} \AA^{-2})}$'
     z_label = 'Minimum Eigenvalue'
 
     ax.set_xlabel(x_label, fontsize=11, weight='bold')
@@ -398,8 +398,8 @@ def underlayer_choice(
     surface = ax.plot_trisurf(x, y, min_eigs, cmap='plasma')
     fig.colorbar(surface, fraction=0.046, pad=0.04)
 
-    x_label = '$\mathregular{Underlayer\ Thickness\ (\AA)}$'
-    y_label = '$\mathregular{Underlayer\ SLD\ (10^{-6} \AA^{-2})}$'
+    x_label = r'$\mathregular{Underlayer\ Thickness\ (\AA)}$'
+    y_label = r'$\mathregular{Underlayer\ SLD\ (10^{-6} \AA^{-2})}$'
     z_label = 'Minimum Eigenvalue'
 
     ax.set_xlabel(x_label, fontsize=11, weight='bold')
