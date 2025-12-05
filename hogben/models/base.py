@@ -318,12 +318,13 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
 
         # Plot the SLD profile for each measured contrast.
         for structure in self.structures:
-            #Limits for the SLD profile plotting based on total slab extent and roughnesses
-            zmin = 0-4*int(structure.slabs()[1, 3])-10
-            zmax = structure.slabs()[:,0].sum()+4*int(structure.slabs()[-1, 3])+10
+            # Limits for SLD plotting based on thickness and roughnesses
+            zmin = 0 - 4 * int(structure.slabs()[1, 3]) - 10
+            zmax = structure.slabs()[:, 0].sum()
+            + 4 * int(structure.slabs()[-1, 3]) + 10
             zsteps = 500
-            ax.plot(*structure.sld_profile(np.linspace(zmin,zmax,zsteps)))
-            
+            ax.plot(*structure.sld_profile(np.linspace(zmin, zmax, zsteps)))
+
         x_label = '$\mathregular{Distance\ (\AA)}$'
         y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
 
