@@ -81,7 +81,6 @@ class BilayerPOPC(BaseLipid):
         )
 
         self.labels = ['Si-D2O', 'Si-POPC-D2O', 'Si-POPC-H2O']
-        self.distances = np.linspace(-20, 95, 500)
         self.scale = [0.677763, 0.645217, 0.667776]
         self.bkg = [3.20559e-06, 2.05875e-06, 2.80358e-06]
         self.dq = 2
@@ -344,7 +343,6 @@ class BilayerDMPC(BaseLipid):
         )
 
         self.labels = ['Si-D2O', 'Si-DMPC-D2O', 'Si-DMPC-H2O']
-        self.distances = np.linspace(-20, 95, 500)
         self.scale = [0.677763, 0.645217, 0.667776]
         self.bkg = [3.20559e-06, 2.05875e-06, 2.80358e-06]
         self.dq = 2
@@ -626,7 +624,6 @@ class BilayerDPPC(BaseLipid):
         )
 
         self.labels = ['dDPPC-RaLPS-D2O', 'dDPPC-RaLPS-SMW', 'dDPPC-RaLPS-H2O']
-        self.distances = np.linspace(-30, 110, 500)
 
         self.contrast_slds = [6.14, 2.07, -0.56]
         self.scale = [0.8, 0.8, 0.8]

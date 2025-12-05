@@ -6,6 +6,8 @@ from typing import Optional
 
 import matplotlib.pyplot as plt
 
+import numpy as np
+
 import refnx.dataset
 import refnx.reflect
 import refnx.analysis
@@ -316,7 +318,12 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
 
         # Plot the SLD profile for each measured contrast.
         for structure in self.structures:
-            ax.plot(*structure.sld_profile(self.distances))
+            # Limits for SLD plotting based on thickness and roughnesses
+            zmin = 0 - 4 * int(structure.slabs()[1, 3]) - 10
+            zmax = structure.slabs()[:, 0].sum()
+            + 4 * int(structure.slabs()[-1, 3]) + 10
+            zsteps = 500
+            ax.plot(*structure.sld_profile(np.linspace(zmin, zmax, zsteps)))
 
         x_label = r'$\mathregular{Distance\ (\AA)}$'
         y_label = r'$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'

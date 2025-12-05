@@ -50,7 +50,6 @@ class MonolayerDPPG(BaseLipid):
         )
 
         self.labels = ['hDPPG-D2O', 'dDPPG-NRW', 'hDPPG-NRW']
-        self.distances = None  # np.linspace(-25, 90, 500)
         self.deuterated = deuterated
 
         self.scale = [1.8899, 1.8832, 1.8574]
