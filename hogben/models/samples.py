@@ -302,8 +302,8 @@ class Sample(BaseSample):
             ax.set_xlim(min(z), max(z))
             ax.plot(z, slds, label=label)
 
-            ax.set_xlabel('$\mathregular{Distance\ (\AA)}$')
-            ax.set_ylabel('$\mathregular{SLD\ (10^{-6} \AA^{-2})}$')
+            ax.set_xlabel(r'$\mathregular{Distance\ (\AA)}$')
+            ax.set_ylabel(r'$\mathregular{SLD\ (10^{-6} \AA^{-2})}$')
             ax.set_title('SLD Profile')
             if len(self.structures) > 1:
                 ax.legend()
@@ -352,7 +352,7 @@ class Sample(BaseSample):
             # Plot Q versus model reflectivity.
             ax.plot(q, r, label=self.labels[i])
 
-            ax.set_xlabel('$\mathregular{Q\ (Å^{-1})}$')
+            ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$')
             ax.set_ylabel('Reflectivity (arb.)')
             ax.set_title('Reflectivity profile')
             ax.set_yscale('log')

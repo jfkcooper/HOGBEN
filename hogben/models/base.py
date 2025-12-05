@@ -183,7 +183,7 @@ class BaseSample(VariableAngle):
             if max(q) > current_xmax:
                 current_xmax = max(q)
 
-        ax.set_xlabel('$\mathregular{Q\ (Å^{-1})}$',
+        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$',
                       weight='bold')
         ax.set_ylabel('Reflectivity (arb.)', weight='bold')
         ax.set_yscale('log')
@@ -318,8 +318,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         for structure in self.structures:
             ax.plot(*structure.sld_profile(self.distances))
 
-        x_label = '$\mathregular{Distance\ (\AA)}$'
-        y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
+        x_label = r'$\mathregular{Distance\ (\AA)}$'
+        y_label = r'$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
 
         ax.set_xlabel(x_label, fontsize=11, weight='bold')
         ax.set_ylabel(y_label, fontsize=11, weight='bold')

@@ -72,7 +72,7 @@ def _kinetics_results_visualise(save_path):
     surface = ax.plot_trisurf(x, y, infos, cmap='plasma')
     fig.colorbar(surface, fraction=0.046, pad=0.04)
 
-    x_label = '$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
+    x_label = r'$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
     y_label = 'Angle (°)'
     z_label = 'Fisher Information'
 
