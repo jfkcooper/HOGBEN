@@ -2,7 +2,6 @@ bumps
 corner
 dynesty
 emcee
-importlib_resources
 matplotlib
 numpy
 periodictable

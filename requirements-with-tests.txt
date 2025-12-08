@@ -3,7 +3,6 @@ corner
 dynesty
 emcee
 flake8
-importlib_resources
 matplotlib
 numpy
 periodictable

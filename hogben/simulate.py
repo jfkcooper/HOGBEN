@@ -2,7 +2,7 @@
 
 import os.path
 
-import importlib_resources
+from importlib.resources import files
 import numpy as np
 
 import refnx.reflect
@@ -78,7 +78,7 @@ class SimulateReflectivity:
                 msg = 'Please provide an instrument name or a local filepath'
                 raise FileNotFoundError(str(msg))
 
-        path = importlib_resources.files('hogben.data.directbeams').joinpath(
+        path = files('hogben.data.directbeams').joinpath(
             inst_dict[self.inst_or_path])
 
         return np.loadtxt(str(path), delimiter=',')
