@@ -43,7 +43,7 @@ def optimise_parameters(sample: BaseSample,
     if not isinstance(angle_times[0], list):
         angle_times = [angle_times for _ in sample.get_models()]
     if sample.is_magnetic() and sample.polarised:
-        angle_times = [[(angle, points, time / 4)
+        angle_times = [[(angle, points, time / 4)  # Approximation for flux lost due to polarisation and measuring spin states separately 
                        for angle, points, time in angle_time]
                        for angle_time in angle_times]
     fisher = Fisher.from_sample(sample, angle_times, inst_or_path=inst_or_path)
