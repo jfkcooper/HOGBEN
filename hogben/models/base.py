@@ -332,7 +332,6 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
 
         x_label = '$\mathregular{Distance\ (\AA)}$'
         y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
-
         ax.set_xlabel(x_label, fontsize=11, weight='bold')
         ax.set_ylabel(y_label, fontsize=11, weight='bold')
 

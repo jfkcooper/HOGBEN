@@ -4,8 +4,6 @@ import os
 
 import matplotlib.pyplot as plt
 
-import numpy as np
-
 import refnx.dataset
 import refnx.reflect
 import refnx.analysis
@@ -46,7 +44,6 @@ class BilayerPOPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         scales (list): experimental scale factor for each measured contrast.
         bkgs (list): level of instrument background noise for each contrast.
         dq (float): instrument resolution.
@@ -308,7 +305,6 @@ class BilayerDMPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         scales (list): experimental scale factor for each measured contrast.
         bkgs (list): level of instrument background noise for each contrast.
         dq (float): instrument resolution.
@@ -583,7 +579,6 @@ class BilayerDPPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         contrast_slds (list): SLD of each measured contrast.
         scale (float): experimental scale factor for measured contrasts.
         bkgs (list): level of instrument background noise for each measured
