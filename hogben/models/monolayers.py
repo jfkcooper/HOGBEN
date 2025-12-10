@@ -25,7 +25,6 @@ class MonolayerDPPG(BaseLipid):
         name (str): name of the monolayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         deuterated (bool): whether the tailgroups are deuterated or not.
         scales (list): experimental scale factor for each measured contrast.
         bkgs (list): level of instrument background noise for each contrast.
@@ -50,7 +49,6 @@ class MonolayerDPPG(BaseLipid):
         )
 
         self.labels = ['hDPPG-D2O', 'dDPPG-NRW', 'hDPPG-NRW']
-        self.distances = None  # np.linspace(-25, 90, 500)
         self.deuterated = deuterated
 
         self.scale = [1.8899, 1.8832, 1.8574]

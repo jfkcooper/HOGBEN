@@ -4,8 +4,6 @@ import os
 
 import matplotlib.pyplot as plt
 
-import numpy as np
-
 import refnx.dataset
 import refnx.reflect
 import refnx.analysis
@@ -46,7 +44,6 @@ class BilayerPOPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         scales (list): experimental scale factor for each measured contrast.
         bkgs (list): level of instrument background noise for each contrast.
         dq (float): instrument resolution.
@@ -81,7 +78,6 @@ class BilayerPOPC(BaseLipid):
         )
 
         self.labels = ['Si-D2O', 'Si-POPC-D2O', 'Si-POPC-H2O']
-        self.distances = np.linspace(-20, 95, 500)
         self.scale = [0.677763, 0.645217, 0.667776]
         self.bkg = [3.20559e-06, 2.05875e-06, 2.80358e-06]
         self.dq = 2
@@ -309,7 +305,6 @@ class BilayerDMPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         scales (list): experimental scale factor for each measured contrast.
         bkgs (list): level of instrument background noise for each contrast.
         dq (float): instrument resolution.
@@ -344,7 +339,6 @@ class BilayerDMPC(BaseLipid):
         )
 
         self.labels = ['Si-D2O', 'Si-DMPC-D2O', 'Si-DMPC-H2O']
-        self.distances = np.linspace(-20, 95, 500)
         self.scale = [0.677763, 0.645217, 0.667776]
         self.bkg = [3.20559e-06, 2.05875e-06, 2.80358e-06]
         self.dq = 2
@@ -585,7 +579,6 @@ class BilayerDPPC(BaseLipid):
         name (str): name of the bilayer sample.
         data_path (str): path to directory containing measured data.
         labels (list): label for each measured contrast.
-        distances (numpy.ndarray): SLD profile x-axis range.
         contrast_slds (list): SLD of each measured contrast.
         scale (float): experimental scale factor for measured contrasts.
         bkgs (list): level of instrument background noise for each measured
@@ -626,7 +619,6 @@ class BilayerDPPC(BaseLipid):
         )
 
         self.labels = ['dDPPC-RaLPS-D2O', 'dDPPC-RaLPS-SMW', 'dDPPC-RaLPS-H2O']
-        self.distances = np.linspace(-30, 110, 500)
 
         self.contrast_slds = [6.14, 2.07, -0.56]
         self.scale = [0.8, 0.8, 0.8]
