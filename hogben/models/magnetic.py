@@ -316,8 +316,8 @@ class SampleYIG(BaseSample, VariableUnderlayer):
         ax.plot(z, slds, color='black', label='SLD')
         ax.plot(z, slds_mag, color='red', label='Magnetic SLD')
 
-        x_label = '$\mathregular{Distance\ (\AA)}$'
-        y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
+        x_label = r'$\mathregular{Distance\ (\AA)}$'
+        y_label = r'$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
 
         ax.set_xlabel(x_label, fontsize=11, weight='bold')
         ax.set_ylabel(y_label, fontsize=11, weight='bold')
@@ -358,7 +358,7 @@ class SampleYIG(BaseSample, VariableUnderlayer):
 
                 count += 1
 
-        x_label = '$\mathregular{Q\ (Å^{-1})}$'
+        x_label = r'$\mathregular{Q\ (Å^{-1})}$'
         y_label = 'Reflectivity (arb.)'
 
         ax.set_xlabel(x_label, fontsize=11, weight='bold')

@@ -185,7 +185,7 @@ class BaseSample(VariableAngle):
             if max(q) > current_xmax:
                 current_xmax = max(q)
 
-        ax.set_xlabel('$\mathregular{Q\ (Å^{-1})}$',
+        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$',
                       weight='bold')
         ax.set_ylabel('Reflectivity (arb.)', weight='bold')
         ax.set_yscale('log')

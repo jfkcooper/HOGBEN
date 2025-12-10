@@ -59,8 +59,8 @@ def _magnetism_results_visualise(save_path):
     surface = ax.plot_trisurf(x, y, infos, cmap='plasma')
     fig.colorbar(surface, fraction=0.046, pad=0.04)
 
-    x_label = '$\mathregular{YIG\ Thickness\ (\AA)}$'
-    y_label = '$\mathregular{Pt\ Thickness\ (\AA)}$'
+    x_label = r'$\mathregular{YIG\ Thickness\ (\AA)}$'
+    y_label = r'$\mathregular{Pt\ Thickness\ (\AA)}$'
     z_label = 'Fisher Information'
 
     ax.set_xlabel(x_label, fontsize=11, weight='bold')

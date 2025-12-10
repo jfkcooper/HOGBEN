@@ -180,7 +180,7 @@ def _figure_2(save_path):
     line_1 = ax1.plot(contrast_range, min_eigs_1, color='b')
     line_2 = ax2.plot(contrast_range, min_eigs_2, color='g')
 
-    x_label = '$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
+    x_label = r'$\mathregular{Contrast\ SLD\ (10^{-6} \AA^{-2})}$'
     y_label = 'Minimum Eigenvalue'
 
     ax1.set_xlabel(x_label, fontsize=11, weight='bold')
