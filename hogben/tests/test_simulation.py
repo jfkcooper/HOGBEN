@@ -172,3 +172,20 @@ class TestSimulate:
             assert len(item) == sum(condition[1] for condition in angle_times)
 
         np.testing.assert_array_less(np.zeros_like(q_binned), q_binned)
+
+    def test_total_count_time(self, refnx_model):
+        """
+        Checks that the total count time is what we define it to be
+        """
+        time1 = 15
+        time2 = 40.5
+        angle_times = [(0.3, 100, time1), (2.3, 150, time2)]
+        sim = SimulateReflectivity(refnx_model, angle_times, self.instrument)
+        q_binned, r_noisy, r_error, counts_incident = (
+            sim.simulate(polarised=False))
+
+        assert np.testing.allclose(sim.total_count_time(), time1+time2)
+
+
+        total_time = sum(condition[1] * condition[2] for condition in angle_times)
+        assert total_time == 100*1000 + 150*2000

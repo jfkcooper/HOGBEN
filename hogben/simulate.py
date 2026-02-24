@@ -27,7 +27,8 @@ class SimulateReflectivity:
     non_pol_instr_dict = {'OFFSPEC': 'OFFSPEC_non_polarised_old.dat',
                           'SURF': 'SURF_non_polarised.dat',
                           'POLREF': 'POLREF_non_polarised.dat',
-                          'INTER': 'INTER_non_polarised.dat'}
+                          'INTER': 'INTER_non_polarised.dat',
+                          'SuperADAM': 'SuperADAM.dat'}
 
     pol_instr_dict = {'OFFSPEC': 'OFFSPEC_polarised_old.dat',
                       'POLREF': 'POLREF_polarised.dat'}
@@ -36,13 +37,17 @@ class SimulateReflectivity:
                  sample_model: refnx.reflect.ReflectModel,
                  angle_times: list[tuple] = None,
                  inst_or_path: str = 'OFFSPEC',
-                 angle_scale: float = 0.3):
+                 angle_scale: float = 0.3,
+                 monochromatic: bool = False):
         """
         Initialises the SimulateReflectivity method
         Args:
             sample_model: a refnx model of a sample
             angle_times: list of tuples of the form (angle, #of points
                          to simulate, length of time to simulate)
+                         If the instrument is monochromatis, a single
+                         value for angle will genreate 20 angles around
+                         this central angle, with all times constant
             inst_or_path: A full path to your direct beam file, or
                           the name of the hogben instrument you want
                           to use
@@ -50,12 +55,42 @@ class SimulateReflectivity:
                          was taken, and therefore how it should be
                          scaled to other angles. All hogben files
                          are pre-scaled to 0.3 degrees.
+            monochromatic: whether the instrument has a monochromatic
+                           beam, which necessitates a different
+                           calculation of the angle_times
         """
 
         self.sample_model = sample_model
         self.angle_times = angle_times
         self.inst_or_path = inst_or_path
         self.angle_scale = angle_scale
+        self.monochromatic = monochromatic
+
+    def monochromatic_angle_times(self, angle: float, time: float, 
+                                  n_points:int = 30) -> list[tuple]:
+        """Generates a list of angle-time tuples for a monochromatic
+        instrument.
+
+        Args:
+            angle: The central angle to generate around.
+            time: The time to be measured at every point
+            n_points: The number of points to generate for each central
+            angle, default is 30
+
+        Returns:
+            A list of tuples of the form (angle, n_points, time).
+        """
+        pass
+
+    def total_count_time(self) -> float:
+        """Calculates the total count time for the simulated experiment.
+
+        Returns:
+            The total count time for the simulated experiment, in seconds
+            or microamp hours, or whatever the direct beam file was
+            normalised by.
+        """
+        return sum([times[2] for times in self.angle_times])
 
     def _incident_flux_data(self, polarised: bool = False) -> np.ndarray:
         """
