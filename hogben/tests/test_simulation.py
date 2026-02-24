@@ -184,8 +184,5 @@ class TestSimulate:
         q_binned, r_noisy, r_error, counts_incident = (
             sim.simulate(polarised=False))
 
-        assert np.testing.allclose(sim.total_count_time(), time1+time2)
-
-
-        total_time = sum(condition[1] * condition[2] for condition in angle_times)
-        assert total_time == 100*1000 + 150*2000
+        np.testing.assert_allclose(sim.total_count_time(), time1+time2)
+        
