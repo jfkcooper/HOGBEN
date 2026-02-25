@@ -212,31 +212,34 @@ class TestSimulate:
         """
 
         instrument = 'SuperADAM'
-        angle_times = [(1.0, 100, 1)]
+        n_points = 100
+        angle_times = [(1.0, n_points, 1)]
 
         sim = SimulateReflectivity(refnx_model,
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
         
-        measurement_angles, measurement_times = sim.monochromatic_angle_times()
+        measurement_angles, measurement_times = sim.monochromatic_angle_times(n_points)
 
-        assert measurement_angles[0] == angle_times[0][0]*(1 - sim.mono_angle_range)
-        assert measurement_angles[-1] == angle_times[0][0]*(1 + sim.mono_angle_range)
-
+        np.testing.assert_allclose(measurement_angles[0], angle_times[0][0]*(1 - sim.mono_angle_range), rtol=0.03)
+        np.testing.assert_allclose(measurement_angles[-1], angle_times[0][0]*(1 + sim.mono_angle_range), rtol=0.03)
 
         np.testing.assert_allclose(measurement_times, angle_times[0][2]/angle_times[0][1])
 
-        angle_times = [(1.0, 100, 1), (2.0, 200, 2)]
+        angle_times = [(1.0, n_points, 1), (2.0, n_points*2, 2)]
 
         sim = SimulateReflectivity(refnx_model,
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
         
-        measurement_angles, measurement_times = sim.monochromatic_angle_times()
+        measurement_angles, measurement_times = sim.monochromatic_angle_times(n_points*3)
 
-        assert measurement_angles[0] == angle_times[0][0]*(1 - sim.mono_angle_range)
-        assert measurement_angles[-1] == angle_times[1][0]*(1 + sim.mono_angle_range)
+        np.testing.assert_allclose(measurement_angles[0], angle_times[0][0]*(1 - sim.mono_angle_range), rtol=0.03)
+        np.testing.assert_allclose(measurement_angles[-1], angle_times[1][0]*(1 + sim.mono_angle_range), rtol=0.03)
 
-        assert len(measurement_angles) == sum(condition[1] for condition in angle_times)
+        assert len(measurement_angles) == n_points*3
+
+        with pytest.warns(UserWarning):
+            sim.monochromatic_angle_times(n_points*3+1)

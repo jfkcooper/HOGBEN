@@ -7,6 +7,7 @@ import numpy as np
 
 import refnx.reflect
 
+import warnings
 
 class SimulateReflectivity:
     """
@@ -219,7 +220,7 @@ class SimulateReflectivity:
 
         return q_binned, r_noisy, r_error, counts_incident
 
-    def monochromatic_angle_times(self) -> list[tuple]:
+    def monochromatic_angle_times(self, n_points) -> list[tuple]:
         """Generates a list of angles and count times to feed into the
         monochromatic instrument to perform the experiment that has been
         simulated.
@@ -231,7 +232,7 @@ class SimulateReflectivity:
         """
         angle_full = np.array([])
         dwell_time = np.array([])
-
+        point_total = 0
 
         for condition in self.angle_times:
             angle, points, time = condition
@@ -239,8 +240,23 @@ class SimulateReflectivity:
             angle_full = np.append(angle_full, geom_angle)
             dwell_time = np.append(dwell_time, time / points *
                                     np.ones_like(geom_angle))
+            point_total += points
+        
 
-        return angle_full, dwell_time
+        angle_bin_edges = np.geomspace(angle_full[0], angle_full[-1], n_points + 1)
+        
+        binned_dwell_times, _ = np.histogram(angle_full, angle_bin_edges, weights=dwell_time)
+
+        angle_bin_centers = np.asarray(
+            [(angle_bin_edges[i] + angle_bin_edges[i + 1]) / 2 for i in range(n_points)])
+
+        if n_points > point_total:
+            msg="""The number of points defined is greater than the 
+                number of points in the simulation rebinning to this may 
+                cause points with zero dwell time."""
+            warnings.warn(msg, UserWarning)
+
+        return angle_bin_centers, binned_dwell_times
 
             
     def geom_space_angles(self, center_angle: float, points: int) -> np.ndarray:
