@@ -172,16 +172,16 @@ class SimulateReflectivity:
         """
         wavelengths, flux = self._incident_flux_data(polarised=polarised).T
 
-        # Scale flux by relative measurement angle squared (assuming both slits
-        # scale linearly with angle, this should be correct)
-
         if self.monochromatic:
             center_angle = angle
             angle = np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
                                  center_angle * (1 + self.mono_angle_range),
                                  points))
+            
             # angle needs to be flipped so the q bins increase monotonically
         
+        # Scale flux by relative measurement angle squared (assuming both slits
+        # scale linearly with angle, this should be correct)
         scaled_flux = flux * pow(angle / self.angle_scale, 2)
 
         q = 4 * np.pi * np.sin(np.radians(angle)) / wavelengths
@@ -189,8 +189,12 @@ class SimulateReflectivity:
         # Bin q's in equally geometrically-spaced bins using flux as weighting
         q_bin_edges = np.geomspace(q[-1], q[0], points + 1)
         flux_binned, _ = np.histogram(q, q_bin_edges, weights=scaled_flux)
+
         # Calculate the number of incident neutrons for each bin.
-        counts_incident = np.array(flux_binned * time)
+        if self.monochromatic:
+            counts_incident = np.array(flux_binned * time / points)
+        else:
+            counts_incident = np.array(flux_binned * time)
 
         # Get the bin centres.
         q_binned = np.asarray(
