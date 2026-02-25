@@ -38,7 +38,8 @@ class SimulateReflectivity:
                  angle_times: list[tuple] = None,
                  inst_or_path: str = 'OFFSPEC',
                  angle_scale: float = 0.3,
-                 monochromatic: bool = False):
+                 monochromatic: bool = False,
+                 monochromatic_angle_range: float = 0.4):
         """
         Initialises the SimulateReflectivity method
         Args:
@@ -58,6 +59,13 @@ class SimulateReflectivity:
             monochromatic: whether the instrument has a monochromatic
                            beam, which necessitates a different
                            calculation of the angle_times
+            mono_angle_range: the scaling of the central angle
+                            to generate the experimental measurement
+                            angles. E.g. for a central angle of 1.0
+                            degrees, a mono_angle_range of 0.4
+                            would generate angles between 1.0*(1-0.4)
+                            and 1.0*(1+0.4), i.e. between 0.6 and 1.4
+                            degrees.
         """
 
         self.sample_model = sample_model
@@ -72,8 +80,11 @@ class SimulateReflectivity:
         instrument.
 
         Args:
-            angle: The central angle to generate around.
-            time: The time to be measured at every point
+            angle: The central angle to generate measurement points
+            around.
+            time: The "time" to be measured at every point in units of
+            the normalisation of the direct beam file (e.g. seconds,
+            microamp hours, etc.)
             n_points: The number of points to generate for each central
             angle, default is 30
 
@@ -180,7 +191,10 @@ class SimulateReflectivity:
         # Scale flux by relative measurement angle squared (assuming both slits
         # scale linearly with angle, this should be correct)
         scaled_flux = flux * pow(angle / self.angle_scale, 2)
-
+        if self.monochromatic:
+            center_angle = angle
+            angle = np.geomspace(center_angle*(1-self.mono_angle_range),
+                                 center_angle*(1+self.mono_angle_range), points)
         q = 4 * np.pi * np.sin(np.radians(angle)) / wavelengths
 
         # Bin q's in equally geometrically-spaced bins using flux as weighting
