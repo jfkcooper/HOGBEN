@@ -75,24 +75,7 @@ class SimulateReflectivity:
         self.monochromatic = monochromatic
         self.mono_angle_range = mono_angle_range
 
-    def monochromatic_angle_times(self, angle: float, time: float, 
-                                  n_points:int = 30) -> list[tuple]:
-        """Generates a list of angle-time tuples for a monochromatic
-        instrument.
 
-        Args:
-            angle: The central angle to generate measurement points
-            around.
-            time: The "time" to be measured at every point in units of
-            the normalisation of the direct beam file (e.g. seconds,
-            microamp hours, etc.)
-            n_points: The number of points to generate for each central
-            angle, default is 30
-
-        Returns:
-            A list of tuples of the form (angle, n_points, time).
-        """
-        pass
 
     def total_count_time(self) -> float:
         """Calculates the total count time for the simulated experiment.
@@ -231,3 +214,42 @@ class SimulateReflectivity:
                             where=counts_incident != 0)
 
         return q_binned, r_noisy, r_error, counts_incident
+
+    def monochromatic_angle_times(self) -> list[tuple]:
+        """Generates a list of angles and count times to feed into the
+        monochromatic instrument to perform the experiment that has been
+        simulated.
+
+        Args:
+
+        Returns:
+            A list of tuples of the form (angle, time).
+        """
+        angle_full = np.array([])
+        dwell_time = np.array([])
+
+
+        for condition in self.angle_times:
+            angle, points, time = condition
+            geom_angle = np.flip(self.geom_space_angles(angle, points))
+            angle_full = np.append(angle_full, geom_angle)
+            dwell_time = np.append(dwell_time, time / points *
+                                    np.ones_like(geom_angle))
+
+        return angle_full, dwell_time
+
+            
+    def geom_space_angles(self, center_angle: float, points: int) -> np.ndarray:
+        """Generates geometrically spaced angles around a center angle, scaled by
+        self.mono_angle_range
+
+        Args:
+            center_angle: the central angle to generate angles around
+            points: the number of angles to generate
+
+        Returns:
+            An array of angles to simulate at.
+        """
+        return np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
+                                     center_angle * (1 + self.mono_angle_range),
+                                     points))

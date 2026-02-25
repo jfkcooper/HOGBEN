@@ -203,3 +203,40 @@ class TestSimulate:
         
         q, _, _, _ = sim._run_experiment(*angle_times[0])
         assert len(q) == angle_times[0][1]
+
+    def test_monochromatic_angle_times(self, refnx_model):
+        """
+        Checks that the correct number of points are generated when
+        monochromatic mode is on, and that the q values are geometrically
+        spaced around the center angle.
+        """
+
+        instrument = 'SuperADAM'
+        angle_times = [(1.0, 100, 1)]
+
+        sim = SimulateReflectivity(refnx_model,
+                                   angle_times,
+                                   instrument,
+                                   monochromatic=True)
+        
+        measurement_angles, measurement_times = sim.monochromatic_angle_times()
+
+        assert measurement_angles[0] == angle_times[0][0]*(1 - sim.mono_angle_range)
+        assert measurement_angles[-1] == angle_times[0][0]*(1 + sim.mono_angle_range)
+
+
+        np.testing.assert_allclose(measurement_times, angle_times[0][2]/angle_times[0][1])
+
+        angle_times = [(1.0, 100, 1), (2.0, 200, 2)]
+
+        sim = SimulateReflectivity(refnx_model,
+                                   angle_times,
+                                   instrument,
+                                   monochromatic=True)
+        
+        measurement_angles, measurement_times = sim.monochromatic_angle_times()
+
+        assert measurement_angles[0] == angle_times[0][0]*(1 - sim.mono_angle_range)
+        assert measurement_angles[-1] == angle_times[1][0]*(1 + sim.mono_angle_range)
+
+        assert len(measurement_angles) == sum(condition[1] for condition in angle_times)
