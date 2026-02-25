@@ -39,7 +39,7 @@ class SimulateReflectivity:
                  inst_or_path: str = 'OFFSPEC',
                  angle_scale: float = 0.3,
                  monochromatic: bool = False,
-                 monochromatic_angle_range: float = 0.4):
+                 mono_angle_range: float = 0.4):
         """
         Initialises the SimulateReflectivity method
         Args:
@@ -73,6 +73,7 @@ class SimulateReflectivity:
         self.inst_or_path = inst_or_path
         self.angle_scale = angle_scale
         self.monochromatic = monochromatic
+        self.mono_angle_range = mono_angle_range
 
     def monochromatic_angle_times(self, angle: float, time: float, 
                                   n_points:int = 30) -> list[tuple]:
@@ -190,11 +191,16 @@ class SimulateReflectivity:
 
         # Scale flux by relative measurement angle squared (assuming both slits
         # scale linearly with angle, this should be correct)
-        scaled_flux = flux * pow(angle / self.angle_scale, 2)
+
         if self.monochromatic:
             center_angle = angle
-            angle = np.geomspace(center_angle*(1-self.mono_angle_range),
-                                 center_angle*(1+self.mono_angle_range), points)
+            angle = np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
+                                 center_angle * (1 + self.mono_angle_range),
+                                 points))
+            # angle needs to be flipped so the q bins increase monotonically
+        
+        scaled_flux = flux * pow(angle / self.angle_scale, 2)
+
         q = 4 * np.pi * np.sin(np.radians(angle)) / wavelengths
 
         # Bin q's in equally geometrically-spaced bins using flux as weighting
