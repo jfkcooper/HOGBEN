@@ -7,6 +7,8 @@ from refnx.reflect import SLD, ReflectModel
 
 from hogben.simulate import SimulateReflectivity
 
+from importlib.resources import files
+
 
 @pytest.fixture(scope='module')
 def refnx_structure():
@@ -193,16 +195,26 @@ class TestSimulate:
         spaced around the center angle.
         """
 
+        path = files('hogben.data.directbeams').joinpath(
+            'SuperADAM.dat')
+
+        mono_flux = np.loadtxt(str(path), delimiter=',')
+
         instrument = 'SuperADAM'
-        angle_times = [(0.3, 100, 1)]
+        points = 100
+        dwell_time = 5
+        angle_times = [(0.3, points, dwell_time)]
 
         sim = SimulateReflectivity(refnx_model,
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
         
-        q, _, _, _ = sim._run_experiment(*angle_times[0])
+        q, _, _, counts = sim._run_experiment(*angle_times[0])
+
         assert len(q) == angle_times[0][1]
+        assert len(counts) == angle_times[0][1]
+        np.testing.assert_allclose(counts, mono_flux[1] * dwell_time / points)
 
     def test_monochromatic_angle_times(self, refnx_model):
         """

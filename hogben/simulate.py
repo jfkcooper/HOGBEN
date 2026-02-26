@@ -178,13 +178,17 @@ class SimulateReflectivity:
             angle = np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
                                  center_angle * (1 + self.mono_angle_range),
                                  points))
-            
             # angle needs to be flipped so the q bins increase monotonically
-        
-        # Scale flux by relative measurement angle squared (assuming both slits
-        # scale linearly with angle, this should be correct)
-        scaled_flux = flux * pow(angle / self.angle_scale, 2)
 
+            scaled_flux = flux * np.ones_like(angle)
+            # For SuperADAM, the slits are not opened with angle so the flux is
+            # constant.
+            
+        else:
+            scaled_flux = flux * pow(angle / self.angle_scale, 2)
+            # Scale flux by relative measurement angle squared (assuming both slits
+            # scale linearly with angle, this should be correct)
+        
         q = 4 * np.pi * np.sin(np.radians(angle)) / wavelengths
 
         # Bin q's in equally geometrically-spaced bins using flux as weighting
