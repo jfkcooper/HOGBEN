@@ -111,7 +111,7 @@ class SimulateReflectivity:
 
         if self.inst_or_path not in inst_dict:
             if os.path.isfile(self.inst_or_path):
-                return np.loadtxt(self.inst_or_path, delimiter=",")
+                return np.loadtxt(self.inst_or_path, delimiter=',')
             else:
                 msg = 'Please provide an instrument name or a local filepath'
                 raise FileNotFoundError(str(msg))
@@ -119,7 +119,7 @@ class SimulateReflectivity:
         path = files('hogben.data.directbeams') \
             .joinpath(inst_dict[self.inst_or_path])
 
-        return np.loadtxt(str(path), delimiter=",")
+        return np.loadtxt(str(path), delimiter=',')
 
     def simulate(self, polarised: bool = False) -> list[np.ndarray]:
         """Simulates a measurement of self.sample_model taken at the angles and
