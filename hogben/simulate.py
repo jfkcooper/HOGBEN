@@ -1,4 +1,4 @@
-"""Methods used to simulate an experiment """
+"""Methods used to simulate an experiment"""
 
 import os.path
 
@@ -8,6 +8,7 @@ import numpy as np
 import refnx.reflect
 
 import warnings
+
 
 class SimulateReflectivity:
     """
@@ -25,22 +26,28 @@ class SimulateReflectivity:
                      can be scaled appropriately), defaults to 0.3
     """
 
-    non_pol_instr_dict = {'OFFSPEC': 'OFFSPEC_non_polarised_old.dat',
-                          'SURF': 'SURF_non_polarised.dat',
-                          'POLREF': 'POLREF_non_polarised.dat',
-                          'INTER': 'INTER_non_polarised.dat',
-                          'SuperADAM': 'SuperADAM.dat'}
+    non_pol_instr_dict = {
+        "OFFSPEC": "OFFSPEC_non_polarised_old.dat",
+        "SURF": "SURF_non_polarised.dat",
+        "POLREF": "POLREF_non_polarised.dat",
+        "INTER": "INTER_non_polarised.dat",
+        "SuperADAM": "SuperADAM.dat",
+    }
 
-    pol_instr_dict = {'OFFSPEC': 'OFFSPEC_polarised_old.dat',
-                      'POLREF': 'POLREF_polarised.dat'}
+    pol_instr_dict = {
+        "OFFSPEC": "OFFSPEC_polarised_old.dat",
+        "POLREF": "POLREF_polarised.dat",
+    }
 
-    def __init__(self,
-                 sample_model: refnx.reflect.ReflectModel,
-                 angle_times: list[tuple] = None,
-                 inst_or_path: str = 'OFFSPEC',
-                 angle_scale: float = 0.3,
-                 monochromatic: bool = False,
-                 mono_angle_range: float = 0.4):
+    def __init__(
+        self,
+        sample_model: refnx.reflect.ReflectModel,
+        angle_times: list[tuple] = None,
+        inst_or_path: str = "OFFSPEC",
+        angle_scale: float = 0.3,
+        monochromatic: bool = False,
+        mono_angle_range: float = 0.4,
+    ):
         """
         Initialises the SimulateReflectivity method
         Args:
@@ -76,8 +83,6 @@ class SimulateReflectivity:
         self.monochromatic = monochromatic
         self.mono_angle_range = mono_angle_range
 
-
-
     def total_count_time(self) -> float:
         """Calculates the total count time for the simulated experiment.
 
@@ -99,23 +104,24 @@ class SimulateReflectivity:
         # Check if the key isn't in the dictionary and check if it is a
         # a local filepath instead
 
-        inst_dict = self.pol_instr_dict if polarised is True \
+        inst_dict = (
+            self.pol_instr_dict if polarised is True
             else self.non_pol_instr_dict
+        )
 
         if self.inst_or_path not in inst_dict:
             if os.path.isfile(self.inst_or_path):
-                return np.loadtxt(self.inst_or_path, delimiter=',')
+                return np.loadtxt(self.inst_or_path, delimiter=",")
             else:
-                msg = 'Please provide an instrument name or a local filepath'
+                msg = "Please provide an instrument name or a local filepath"
                 raise FileNotFoundError(str(msg))
 
-        path = files('hogben.data.directbeams').joinpath(
-            inst_dict[self.inst_or_path])
+        path = files("hogben.data.directbeams") \
+            .joinpath(inst_dict[self.inst_or_path])
 
-        return np.loadtxt(str(path), delimiter=',')
+        return np.loadtxt(str(path), delimiter=",")
 
-    def simulate(self, polarised: bool = False) -> \
-            list[np.ndarray]:
+    def simulate(self, polarised: bool = False) -> list[np.ndarray]:
         """Simulates a measurement of self.sample_model taken at the angles and
         for the durations specified in self.angle_times on the instrument
         specified in self.inst_or_path
@@ -130,9 +136,12 @@ class SimulateReflectivity:
         """
         # Non-polarised case
         # [(4, N), (4, M)] --> (4, N + M)
-        simulation = np.hstack([
-            self._run_experiment(*condition, polarised) for condition in self.angle_times
-        ])
+        simulation = np.hstack(
+            [
+                self._run_experiment(*condition, polarised)
+                for condition in self.angle_times
+            ]
+        )
 
         # order by q
         simulation = simulation[:, np.argsort(simulation[0])]
@@ -156,8 +165,9 @@ class SimulateReflectivity:
 
         return self.sample_model(q)
 
-    def _run_experiment(self, angle: float, points: int, time: float,
-                        polarised: bool = False) -> tuple:
+    def _run_experiment(
+        self, angle: float, points: int, time: float, polarised: bool = False
+    ) -> tuple:
         """Simulates a single angle measurement of a given 'model' on the
         instrument set in self.incident_flux_data
 
@@ -175,20 +185,24 @@ class SimulateReflectivity:
 
         if self.monochromatic:
             center_angle = angle
-            angle = np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
-                                 center_angle * (1 + self.mono_angle_range),
-                                 points))
+            angle = np.flip(
+                np.geomspace(
+                    center_angle * (1 - self.mono_angle_range),
+                    center_angle * (1 + self.mono_angle_range),
+                    points,
+                )
+            )
             # angle needs to be flipped so the q bins increase monotonically
 
             scaled_flux = flux * np.ones_like(angle)
             # For SuperADAM, the slits are not opened with angle so the flux is
             # constant.
-            
+
         else:
             scaled_flux = flux * pow(angle / self.angle_scale, 2)
-            # Scale flux by relative measurement angle squared (assuming both slits
-            # scale linearly with angle, this should be correct)
-        
+            # Scale flux by relative measurement angle squared (assuming both
+            # slits scale linearly with angle, this should be correct)
+
         q = 4 * np.pi * np.sin(np.radians(angle)) / wavelengths
 
         # Bin q's in equally geometrically-spaced bins using flux as weighting
@@ -203,24 +217,31 @@ class SimulateReflectivity:
 
         # Get the bin centres.
         q_binned = np.asarray(
-            [(q_bin_edges[i] + q_bin_edges[i + 1]) / 2 for i in range(points)])
+            [(q_bin_edges[i] + q_bin_edges[i + 1]) / 2 for i in range(points)]
+        )
 
         r_model = self.reflectivity(q_binned)
 
         # Get the measured reflected count for each bin.
         # r_model accounts for background.
-        counts_reflected = np.random.poisson(r_model * counts_incident).astype(
-            float)
+        counts_reflected = np.random.poisson(r_model
+                                             * counts_incident).astype(float)
 
         # Convert from count space to reflectivity space.
         # Point has zero reflectivity if there is no flux.
-        r_noisy = np.divide(counts_reflected, counts_incident,
-                            out=np.zeros_like(counts_reflected),
-                            where=counts_incident != 0)
+        r_noisy = np.divide(
+            counts_reflected,
+            counts_incident,
+            out=np.zeros_like(counts_reflected),
+            where=counts_incident != 0,
+        )
 
-        r_error = np.divide(np.sqrt(counts_reflected), counts_incident,
-                            out=np.zeros_like(counts_reflected),
-                            where=counts_incident != 0)
+        r_error = np.divide(
+            np.sqrt(counts_reflected),
+            counts_incident,
+            out=np.zeros_like(counts_reflected),
+            where=counts_incident != 0,
+        )
 
         return q_binned, r_noisy, r_error, counts_incident
 
@@ -242,30 +263,34 @@ class SimulateReflectivity:
             angle, points, time = condition
             geom_angle = np.flip(self.geom_space_angles(angle, points))
             angle_full = np.append(angle_full, geom_angle)
-            dwell_time = np.append(dwell_time, time / points *
-                                    np.ones_like(geom_angle))
+            dwell_time = np.append(dwell_time,
+                                   time / points * np.ones_like(geom_angle))
             point_total += points
-        
 
-        angle_bin_edges = np.geomspace(angle_full[0], angle_full[-1], n_points + 1)
-        
-        binned_dwell_times, _ = np.histogram(angle_full, angle_bin_edges, weights=dwell_time)
+        angle_bin_edges = np.geomspace(angle_full[0],
+                                       angle_full[-1],
+                                       n_points + 1)
+
+        binned_dwell_times, _ = np.histogram(
+            angle_full, angle_bin_edges, weights=dwell_time
+        )
 
         angle_bin_centers = np.asarray(
-            [(angle_bin_edges[i] + angle_bin_edges[i + 1]) / 2 for i in range(n_points)])
+            [(angle_bin_edges[i] + angle_bin_edges[i + 1]) / 2
+             for i in range(n_points)]
+        )
 
         if n_points > point_total:
-            msg="""The number of points defined is greater than the 
-                number of points in the simulation rebinning to this may 
+            msg = """The number of points defined is greater than the
+                number of points in the simulation rebinning to this may
                 cause points with zero dwell time."""
             warnings.warn(msg, UserWarning)
 
         return angle_bin_centers, binned_dwell_times
 
-            
-    def geom_space_angles(self, center_angle: float, points: int) -> np.ndarray:
-        """Generates geometrically spaced angles around a center angle, scaled by
-        self.mono_angle_range
+    def geom_space_angles(self, mid_angle: float, points: int) -> np.ndarray:
+        """Generates geometrically spaced angles around a center angle, scaled
+        by self.mono_angle_range
 
         Args:
             center_angle: the central angle to generate angles around
@@ -274,6 +299,10 @@ class SimulateReflectivity:
         Returns:
             An array of angles to simulate at.
         """
-        return np.flip(np.geomspace(center_angle * (1 - self.mono_angle_range),
-                                     center_angle * (1 + self.mono_angle_range),
-                                     points))
+        return np.flip(
+            np.geomspace(
+                mid_angle * (1 - self.mono_angle_range),
+                mid_angle * (1 + self.mono_angle_range),
+                points,
+            )
+        )

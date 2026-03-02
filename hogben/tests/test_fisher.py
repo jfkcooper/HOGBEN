@@ -15,6 +15,7 @@ from unittest.mock import Mock, patch
 QS = [np.array([0.1, 0.2, 0.4, 0.6, 0.8])]
 COUNTS = [np.ones(len(QS[0])) * 100]
 
+
 @pytest.fixture
 def model():
     """Define a bilayer sample, and return the associated refnx model"""
@@ -73,6 +74,7 @@ def refnx_two_solvents():
     structure_H2O = H2O | layer1 | layer2 | substrate
     structure_D2O = D2O | layer1 | layer2 | substrate
     return [structure_H2O, structure_D2O]
+
 
 def generate_reflectivity_data():
     """
@@ -257,6 +259,7 @@ def test_fisher_diagonal_non_negative(mock_reflectivity,
     g = Fisher([qs], mock_model.xi, counts, [mock_model]).fisher_information
     assert np.all(np.diag(g)) >= 0
 
+
 @pytest.mark.parametrize('model_params', (1, 2, 3, 4))
 def test_fisher_no_data(model_params, mock_model):
     """Tests whether a model with zero data points properly returns an empty
@@ -264,6 +267,7 @@ def test_fisher_no_data(model_params, mock_model):
     xi = mock_model.xi[:model_params]
     g = Fisher([], xi, COUNTS, [mock_model]).fisher_information
     np.testing.assert_equal(g, np.zeros((len(xi), len(xi))))
+
 
 @patch('hogben.utils.SimulateReflectivity.reflectivity')
 def test_fisher_no_parameters(mock_reflectivity, mock_model):

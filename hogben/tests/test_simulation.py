@@ -3,6 +3,7 @@
 import pytest
 
 import numpy as np
+import numpy.testing as npt
 from refnx.reflect import SLD, ReflectModel
 
 from hogben.simulate import SimulateReflectivity
@@ -136,8 +137,8 @@ class TestSimulate:
         sim = SimulateReflectivity(refnx_model)
         ideal_reflectivity = sim.reflectivity(np.linspace(0.001, 0.3, 200))
 
-        np.testing.assert_array_less(np.zeros(len(ideal_reflectivity)),
-                                     ideal_reflectivity)
+        npt.assert_array_less(np.zeros(len(ideal_reflectivity)),
+                              ideal_reflectivity)
 
     @pytest.mark.parametrize('polarised', (True, False))
     def test_run_experiment(self, refnx_model, polarised):
@@ -155,7 +156,7 @@ class TestSimulate:
         for item in [q_binned, r_noisy, r_error, counts_incident]:
             assert len(item) == self.angle_times[0][1]
 
-        np.testing.assert_array_less(np.zeros_like(q_binned), q_binned)
+        npt.assert_array_less(np.zeros_like(q_binned), q_binned)
 
     @pytest.mark.parametrize('polarised', (True, False))
     def test_simulate_multiple_angles(self, refnx_model, polarised):
@@ -173,7 +174,7 @@ class TestSimulate:
         for item in [q_binned, r_noisy, r_error, counts_incident]:
             assert len(item) == sum(condition[1] for condition in angle_times)
 
-        np.testing.assert_array_less(np.zeros_like(q_binned), q_binned)
+        npt.assert_array_less(np.zeros_like(q_binned), q_binned)
 
     def test_total_count_time(self, refnx_model):
         """
@@ -186,8 +187,8 @@ class TestSimulate:
         q_binned, r_noisy, r_error, counts_incident = (
             sim.simulate(polarised=False))
 
-        np.testing.assert_allclose(sim.total_count_time(), time1+time2)
-        
+        npt.assert_allclose(sim.total_count_time(), time1 + time2)
+
     def test_run_experiment_monochromatic(self, refnx_model):
         """
         Checks that the correct number of points are generated when
@@ -209,12 +210,12 @@ class TestSimulate:
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
-        
+
         q, _, _, counts = sim._run_experiment(*angle_times[0])
 
         assert len(q) == angle_times[0][1]
         assert len(counts) == angle_times[0][1]
-        np.testing.assert_allclose(counts, mono_flux[1] * dwell_time / points)
+        npt.assert_allclose(counts, mono_flux[1] * dwell_time / points)
 
     def test_monochromatic_angle_times(self, refnx_model):
         """
@@ -231,27 +232,35 @@ class TestSimulate:
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
-        
-        measurement_angles, measurement_times = sim.monochromatic_angle_times(n_points)
 
-        np.testing.assert_allclose(measurement_angles[0], angle_times[0][0]*(1 - sim.mono_angle_range), rtol=0.03)
-        np.testing.assert_allclose(measurement_angles[-1], angle_times[0][0]*(1 + sim.mono_angle_range), rtol=0.03)
+        angles, times = sim.monochromatic_angle_times(n_points)
 
-        np.testing.assert_allclose(measurement_times, angle_times[0][2]/angle_times[0][1])
+        npt.assert_allclose(angles[0],
+                            angle_times[0][0] * (1 - sim.mono_angle_range),
+                            rtol=0.03)
+        npt.assert_allclose(angles[-1],
+                            angle_times[0][0] * (1 + sim.mono_angle_range),
+                            rtol=0.03)
 
-        angle_times = [(1.0, n_points, 1), (2.0, n_points*2, 2)]
+        npt.assert_allclose(times, angle_times[0][2] / angle_times[0][1])
+
+        angle_times = [(1.0, n_points, 1), (2.0, n_points * 2, 2)]
 
         sim = SimulateReflectivity(refnx_model,
                                    angle_times,
                                    instrument,
                                    monochromatic=True)
-        
-        measurement_angles, measurement_times = sim.monochromatic_angle_times(n_points*3)
 
-        np.testing.assert_allclose(measurement_angles[0], angle_times[0][0]*(1 - sim.mono_angle_range), rtol=0.03)
-        np.testing.assert_allclose(measurement_angles[-1], angle_times[1][0]*(1 + sim.mono_angle_range), rtol=0.03)
+        angles, times = sim.monochromatic_angle_times(n_points * 3)
 
-        assert len(measurement_angles) == n_points*3
+        npt.assert_allclose(angles[0],
+                            angle_times[0][0] * (1 - sim.mono_angle_range),
+                            rtol=0.03)
+        npt.assert_allclose(angles[-1],
+                            angle_times[1][0] * (1 + sim.mono_angle_range),
+                            rtol=0.03)
+
+        assert len(angles) == n_points * 3
 
         with pytest.warns(UserWarning):
-            sim.monochromatic_angle_times(n_points*3+1)
+            sim.monochromatic_angle_times(n_points * 3 + 1)

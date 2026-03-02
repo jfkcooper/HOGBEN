@@ -128,6 +128,7 @@ def scan_parameters(sample: BaseSample,
         ax.set_title(param.name)
         ax.plot(param_values[i], eigenval_list[i], label=param.name)
 
+
 def angle_choice_with_time(
     sample: BaseSample,
     initial_angle: float,
