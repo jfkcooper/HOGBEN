@@ -27,23 +27,23 @@ class SimulateReflectivity:
     """
 
     non_pol_instr_dict = {
-        "OFFSPEC": "OFFSPEC_non_polarised_old.dat",
-        "SURF": "SURF_non_polarised.dat",
-        "POLREF": "POLREF_non_polarised.dat",
-        "INTER": "INTER_non_polarised.dat",
-        "SuperADAM": "SuperADAM.dat",
+        'OFFSPEC': 'OFFSPEC_non_polarised_old.dat',
+        'SURF': 'SURF_non_polarised.dat',
+        'POLREF': 'POLREF_non_polarised.dat',
+        'INTER': 'INTER_non_polarised.dat',
+        'SuperADAM': 'SuperADAM.dat',
     }
 
     pol_instr_dict = {
-        "OFFSPEC": "OFFSPEC_polarised_old.dat",
-        "POLREF": "POLREF_polarised.dat",
+        'OFFSPEC': 'OFFSPEC_polarised_old.dat',
+        'POLREF': 'POLREF_polarised.dat',
     }
 
     def __init__(
         self,
         sample_model: refnx.reflect.ReflectModel,
         angle_times: list[tuple] = None,
-        inst_or_path: str = "OFFSPEC",
+        inst_or_path: str = 'OFFSPEC',
         angle_scale: float = 0.3,
         monochromatic: bool = False,
         mono_angle_range: float = 0.4,
@@ -113,10 +113,10 @@ class SimulateReflectivity:
             if os.path.isfile(self.inst_or_path):
                 return np.loadtxt(self.inst_or_path, delimiter=",")
             else:
-                msg = "Please provide an instrument name or a local filepath"
+                msg = 'Please provide an instrument name or a local filepath'
                 raise FileNotFoundError(str(msg))
 
-        path = files("hogben.data.directbeams") \
+        path = files('hogben.data.directbeams') \
             .joinpath(inst_dict[self.inst_or_path])
 
         return np.loadtxt(str(path), delimiter=",")
