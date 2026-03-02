@@ -41,7 +41,6 @@ class MockSample:
         self.is_magnetic = MagicMock()
         self.polarised = False
 
-
     def get_param_by_attribute(self, _attribute):
         """
         Return mocked parameters when requesting parameters from attribute
@@ -60,6 +59,7 @@ class MockFisher:
     def from_sample(sample, angle_times, inst_or_path='OFFSPEC'):
         """Create a Mocked Fisher object from sample"""
         return MockFisher(sample, angle_times, inst_or_path)
+
 
 @patch('hogben.optimise.Optimiser._Optimiser__optimise')
 def test_optimise_angle_times_length(mock_optimise, refnx_sample):

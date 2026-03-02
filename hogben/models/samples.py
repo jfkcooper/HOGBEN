@@ -263,7 +263,6 @@ class Sample(BaseSample):
                 ' strings!'
             )
 
-
     def angle_info(self,
                    angle_times: list[tuple],
                    contrasts: Any | None = None) -> Fisher:

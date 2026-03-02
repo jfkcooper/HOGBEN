@@ -104,7 +104,6 @@ class BaseSample(VariableAngle):
                     return True
         return False
 
-
     def get_param_by_attribute(self, attr: str) -> list:
         """
         Get all parameters defined in the sample model that have a given
