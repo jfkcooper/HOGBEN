@@ -135,7 +135,9 @@ class BaseSample(VariableAngle):
         all structures of the Sample, and returns these in a list.
         """
 
-        dq_values = self.dq if isinstance(self.dq, (list, tuple)) else [self.dq] * len(self.structures)
+        dq_values = (self.dq
+                    if isinstance(self.dq, (list, tuple))
+                    else [self.dq] * len(self.structures))
 
         return [
             refnx.reflect.ReflectModel(
