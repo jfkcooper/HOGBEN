@@ -136,8 +136,8 @@ class BaseSample(VariableAngle):
         """
 
         dq_values = (self.dq
-                    if isinstance(self.dq, (list, tuple))
-                    else [self.dq] * len(self.structures))
+                     if isinstance(self.dq, (list, tuple))
+                     else [self.dq] * len(self.structures))
 
         return [
             refnx.reflect.ReflectModel(
