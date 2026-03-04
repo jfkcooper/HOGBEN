@@ -134,12 +134,20 @@ class BaseSample(VariableAngle):
         Generates a refnx `ReflectModel` for each structure associated with the
         all structures of the Sample, and returns these in a list.
         """
-        return [refnx.reflect.ReflectModel(structure,
-                                           scale=scale,
-                                           bkg=bkg,
-                                           dq=dq)
-                for structure, scale, bkg, dq
-                in zip(self.structures, self.scale, self.bkg, [self.dq])]
+
+        dq_values = self.dq if isinstance(self.dq, (list, tuple)) else [self.dq] * len(self.structures)
+
+        return [
+            refnx.reflect.ReflectModel(
+                structure,
+                scale=scale,
+                bkg=bkg,
+                dq=dq
+            )
+            for structure, scale, bkg, dq in zip(
+                self.structures, self.scale, self.bkg, dq_values
+            )
+        ]
 
     def simulate_reflectivity(self, angle_times,
                               inst_or_path='OFFSPEC') -> None:
