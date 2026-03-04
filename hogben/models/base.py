@@ -139,7 +139,7 @@ class BaseSample(VariableAngle):
                                            bkg=bkg,
                                            dq=dq)
                 for structure, scale, bkg, dq
-                in zip(self.structures, self.scale, self.bkg, self.dq)]
+                in zip(self.structures, self.scale, self.bkg, [self.dq])
 
     def simulate_reflectivity(self, angle_times,
                               inst_or_path='OFFSPEC') -> None:
