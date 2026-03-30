@@ -430,6 +430,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             model.bkg = background_level
             model.dq = 2
             data = SimulateReflectivity(model, angle_times).simulate()
+            
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
 

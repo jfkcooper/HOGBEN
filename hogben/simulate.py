@@ -147,7 +147,7 @@ class SimulateReflectivity:
         simulation = simulation[:, np.argsort(simulation[0])]
 
         # return as list
-        return simulation.tolist()
+        return simulation
 
     def reflectivity(self, q: np.ndarray) -> np.ndarray:
         """Calculates the model reflectivity at given `q` points.
