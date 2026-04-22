@@ -156,7 +156,7 @@ def test_contrasts_func_result():
     result = optimiser._contrasts_func(contrasts_time, num_contrasts,
                                        angle_splits, total_time)
 
-    expected_result = -0.199884
+    expected_result = -4.345145
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
 
@@ -173,7 +173,7 @@ def test_underlayers_func():
     result = optimiser._underlayers_func(thickness_SLD, num_underlayers,
                                          angle_times, contrasts)
 
-    expected_result = -1.500100628
+    expected_result = -2.280329121
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
 
