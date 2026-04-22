@@ -17,6 +17,8 @@ from refnx._lib import flatten
 
 from hogben.simulate import SimulateReflectivity
 from hogben.utils import Fisher, Sampler, save_plot
+from itertools import repeat
+
 
 plt.rcParams['figure.figsize'] = (9, 7)
 plt.rcParams['figure.dpi'] = 600
