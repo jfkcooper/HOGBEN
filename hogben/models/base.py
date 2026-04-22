@@ -133,8 +133,8 @@ class BaseSample(VariableAngle):
 
     def get_models(self) -> list:
         """
-        Generates a `ReflectModel` for each structure associated with the
-        Sample, and returns these in a list.
+        Generates a refnx `ReflectModel` for each structure associated with the
+        all structures of the Sample, and returns these in a list.
         """
         dq_iter = (
             self.dq
