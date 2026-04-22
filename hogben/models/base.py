@@ -131,23 +131,24 @@ class BaseSample(VariableAngle):
 
     def get_models(self) -> list:
         """
-        Generates a refnx `ReflectModel` for each structure associated with the
-        all structures of the Sample, and returns these in a list.
+        Generates a `ReflectModel` for each structure associated with the
+        Sample, and returns these in a list.
         """
-
-        dq_values = (self.dq
-                     if isinstance(self.dq, (list, tuple))
-                     else [self.dq] * len(self.structures))
+        dq_iter = (
+            self.dq
+            if isinstance(self.dq, (list, tuple))
+            else repeat(self.dq)
+        )
 
         return [
             refnx.reflect.ReflectModel(
                 structure,
                 scale=scale,
                 bkg=bkg,
-                dq=dq
+                dq=dq,
             )
             for structure, scale, bkg, dq in zip(
-                self.structures, self.scale, self.bkg, dq_values
+                self.structures, self.scale, self.bkg, dq_iter
             )
         ]
 
