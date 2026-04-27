@@ -121,21 +121,16 @@ class BilayerPOPC(BaseLipid):
         )
 
         self.params = [
-            self.si_rough,
             self.sio2_thick,
-            self.sio2_rough,
             self.sio2_solv,
             self.popc_apm,
-            self.bilayer_rough,
             self.bilayer_solv,
             self.hg_waters,
         ]
 
         self.underlayer_params = [
-            self.si_rough,
             self.sio2_thick,
             self.popc_apm,
-            self.bilayer_rough,
             self.bilayer_solv,
             self.hg_waters,
         ]
@@ -382,21 +377,16 @@ class BilayerDMPC(BaseLipid):
         )
 
         self.params = [
-            self.si_rough,
             self.sio2_thick,
-            self.sio2_rough,
             self.sio2_solv,
             self.dmpc_apm,
-            self.bilayer_rough,
             self.bilayer_solv,
             self.hg_waters,
         ]
 
         self.underlayer_params = [
-            self.si_rough,
             self.sio2_thick,
             self.dmpc_apm,
-            self.bilayer_rough,
             self.bilayer_solv,
             self.hg_waters,
         ]
@@ -676,13 +666,10 @@ class BilayerDPPC(BaseLipid):
         )
 
         self.params = [
-            self.si_rough,
             self.sio2_thick,
-            self.sio2_rough,
             self.sio2_solv,
             self.inner_hg_thick,
             self.inner_hg_solv,
-            self.bilayer_rough,
             self.inner_tg_thick,
             self.outer_tg_thick,
             self.tg_solv,
@@ -692,11 +679,9 @@ class BilayerDPPC(BaseLipid):
         ]
 
         self.underlayer_params = [
-            self.si_rough,
             self.sio2_thick,
             self.inner_hg_thick,
             self.inner_hg_solv,
-            self.bilayer_rough,
             self.inner_tg_thick,
             self.outer_tg_thick,
             self.tg_solv,

@@ -17,6 +17,8 @@ from refnx._lib import flatten
 
 from hogben.simulate import SimulateReflectivity
 from hogben.utils import Fisher, Sampler, save_plot
+from itertools import repeat
+
 
 plt.rcParams['figure.figsize'] = (9, 7)
 plt.rcParams['figure.dpi'] = 600
@@ -134,12 +136,23 @@ class BaseSample(VariableAngle):
         Generates a refnx `ReflectModel` for each structure associated with the
         all structures of the Sample, and returns these in a list.
         """
-        return [refnx.reflect.ReflectModel(structure,
-                                           scale=scale,
-                                           bkg=bkg,
-                                           dq=dq)
-                for structure, scale, bkg, dq
-                in zip(self.structures, self.scale, self.bkg, self.dq)]
+        dq_iter = (
+            self.dq
+            if isinstance(self.dq, (list, tuple))
+            else repeat(self.dq)
+        )
+
+        return [
+            refnx.reflect.ReflectModel(
+                structure,
+                scale=scale,
+                bkg=bkg,
+                dq=dq,
+            )
+            for structure, scale, bkg, dq in zip(
+                self.structures, self.scale, self.bkg, dq_iter
+            )
+        ]
 
     def simulate_reflectivity(self, angle_times,
                               inst_or_path='OFFSPEC') -> None:
