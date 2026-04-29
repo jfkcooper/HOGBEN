@@ -186,7 +186,6 @@ class SimulateReflectivity:
         if self.monochromatic:
             center_angle = angle
             angle = self.geom_space_angles(center_angle, points)
-            
             # angle needs to be flipped so the q bins increase monotonically
 
             scaled_flux = flux * np.ones_like(angle)
