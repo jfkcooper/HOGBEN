@@ -397,7 +397,8 @@ class Sample(BaseSample):
                         angle_times: list,
                         save_path: str,
                         filename: str,
-                        dynamic: bool = False) -> None:
+                        dynamic: bool = False,
+                        inst_or_path: str = 'OFFSPEC') -> None:
         """Runs nested sampling on simulated data of the sample.
 
         Args:
@@ -405,13 +406,13 @@ class Sample(BaseSample):
             save_path (str): path to directory to save corner plot to.
             filename (str): file name to use when saving corner plot.
             dynamic (bool): whether to use static or dynamic nested sampling.
-
+            inst_or_path (str): instrument or path to direct beam file.
         """
         # Simulate data for the sample.
         objectives = []
         for structure in self.structures:
             model = refnx.reflect.ReflectModel(structure)
-            data = SimulateReflectivity(model, angle_times, 'OFFSPEC').simulate()
+            data = SimulateReflectivity(model, angle_times, inst_or_path).simulate()
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
             objective = Objective(model, data)
