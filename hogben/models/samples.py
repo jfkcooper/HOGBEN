@@ -265,12 +265,15 @@ class Sample(BaseSample):
 
     def angle_info(self,
                    angle_times: list[tuple],
-                   contrasts: Any | None = None) -> Fisher:
+                   contrasts: Any | None = None,
+                   inst_or_path: str = 'OFFSPEC') -> Fisher:
         """Calculates the Fisher information matrix for a sample measured
            over a number of angles.
 
         Args:
             angle_times (list): points and times for each angle to simulate.
+            contrasts: not used.
+            inst_or_path: instrument or path to direct beam file.
 
         Returns:
             Fisher: Fisher information object
@@ -280,7 +283,7 @@ class Sample(BaseSample):
         models = self.get_models()
         qs, counts = [], []
         for model in models:
-            data = SimulateReflectivity(model, angle_times).simulate()
+            data = SimulateReflectivity(model, angle_times, inst_or_path).simulate()
             qs.append(data[0])
             counts.append(data[3])
         return Fisher(qs, self.params, counts, models)
@@ -408,7 +411,7 @@ class Sample(BaseSample):
         objectives = []
         for structure in self.structures:
             model = refnx.reflect.ReflectModel(structure)
-            data = SimulateReflectivity(model, angle_times).simulate()
+            data = SimulateReflectivity(model, angle_times, 'OFFSPEC').simulate()
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
             objective = Objective(model, data)
