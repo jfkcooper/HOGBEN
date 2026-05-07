@@ -51,7 +51,7 @@ class VariableUnderlayer(ABC):
        can be varied."""
 
     @abstractmethod
-    def underlayer_info(self, angle_times, contrasts, underlayers, inst_or_path='OFFSPEC'):
+    def underlayer_info(self):
         """Calculates the Fisher information matrix for a sample with
         underlayers, and contrasts measured over a number of angles."""
         pass
