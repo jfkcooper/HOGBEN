@@ -29,7 +29,7 @@ class VariableAngle(ABC):
        can be varied."""
 
     @abstractmethod
-    def angle_info(self, angle_times, contrasts=None, inst_or_path='OFFSPEC'):
+    def angle_info(self):
         """Calculates the Fisher information matrix for a sample measured
         over a number of angles."""
         pass
