@@ -40,7 +40,7 @@ class VariableContrast(ABC):
        dan be varied."""
 
     @abstractmethod
-    def contrast_info(self, angle_times, contrasts, inst_or_path='OFFSPEC'):
+    def contrast_info(self):
         """Calculates the Fisher information matrix for a sample with contrasts
            measured over a number of angles."""
         pass
