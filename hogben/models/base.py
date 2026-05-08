@@ -227,7 +227,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         """Loads the measured data for the lipid sample."""
         pass
 
-    def angle_info(self, angle_times, contrasts=None, inst_or_path='OFFSPEC'):
+    def angle_info(self, angle_times, contrasts=None,
+                   inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample
            measured over a number of angles.
 
@@ -239,7 +240,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, None, inst_or_path)
+        return self.__conditions_info(angle_times, contrasts, None,
+                                      inst_or_path)
 
     def contrast_info(self, angle_times, contrasts, inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample
@@ -253,9 +255,11 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, None, inst_or_path)
+        return self.__conditions_info(angle_times, contrasts, None,
+                                      inst_or_path)
 
-    def underlayer_info(self, angle_times, contrasts, underlayers, inst_or_path='OFFSPEC'):
+    def underlayer_info(self, angle_times, contrasts, underlayers,
+                        inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample with
            `underlayers`, and `contrasts` measured over a number of angles.
 
@@ -268,9 +272,11 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, underlayers, inst_or_path)
+        return self.__conditions_info(angle_times, contrasts, underlayers,
+                                      inst_or_path)
 
-    def __conditions_info(self, angle_times, contrasts, underlayers, inst_or_path='OFFSPEC'):
+    def __conditions_info(self, angle_times, contrasts, underlayers,
+                          inst_or_path='OFFSPEC'):
         """Calculates the Fisher information object for the lipid sample
            with given conditions.
 
