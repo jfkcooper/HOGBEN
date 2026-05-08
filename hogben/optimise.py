@@ -407,7 +407,8 @@ class Optimiser:
 
             # Add data from current contrast to Fisher information matrix
             g += self.sample.contrast_info(angle_times,
-                                           [x[i]], inst_or_path).fisher_information
+                                           [x[i]],
+                                           inst_or_path).fisher_information
 
         # Return negative of the minimum eigenvalue as algorithm is minimising.
         return -np.linalg.eigvalsh(g)[0]
