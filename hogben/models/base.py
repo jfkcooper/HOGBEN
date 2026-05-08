@@ -426,7 +426,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
                         save_path: str,
                         filename: str,
                         underlayers=None,
-                        dynamic=False) -> None:
+                        dynamic=False,
+                        inst_or_path='OFFSPEC') -> None:
         """Runs nested sampling on simulated data of the lipid sample.
 
         Args:
@@ -436,7 +437,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             filename (str): file name to use when saving corner plot.
             underlayers (list): thickness and SLD of each underlayer to add.
             dynamic (bool): whether to use static or dynamic nested sampling.
-
+            inst_or_path (str): instrument or path to direct beam file.
         """
         # Create objectives for each contrast to sample with.
         objectives = []

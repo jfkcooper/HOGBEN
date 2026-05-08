@@ -283,7 +283,8 @@ class Sample(BaseSample):
         models = self.get_models()
         qs, counts = [], []
         for model in models:
-            data = SimulateReflectivity(model, angle_times, inst_or_path).simulate()
+            data = SimulateReflectivity(model, angle_times,
+                                         inst_or_path).simulate()
             qs.append(data[0])
             counts.append(data[3])
         return Fisher(qs, self.params, counts, models)
@@ -412,7 +413,8 @@ class Sample(BaseSample):
         objectives = []
         for structure in self.structures:
             model = refnx.reflect.ReflectModel(structure)
-            data = SimulateReflectivity(model, angle_times, inst_or_path).simulate()
+            data = SimulateReflectivity(model, angle_times,
+                                         inst_or_path).simulate()
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
             objective = Objective(model, data)
