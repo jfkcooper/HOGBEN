@@ -239,7 +239,8 @@ class SampleYIG(BaseSample, VariableUnderlayer):
         """
         # Simulate the polarised experiment.
         models, datasets = [], []
-
+        # Below script is redundant and needs updating with new
+        # magnetic procedure using Refnx approach
         """simulate_magnetic(self.structure, angle_times,
                                              scale=1, bkg=5e-7, dq=2,
                                              pp=True, pm=False,
@@ -268,6 +269,8 @@ class SampleYIG(BaseSample, VariableUnderlayer):
 
         # Simulate a polarised measurement of the structure.
         models, datasets = [], []
+        # Below script is redundant and needs updating with new
+        # magnetic procedure using Refnx approach
         """simulate_magnetic(structure, angle_times,
                                              scale=1, bkg=5e-7, dq=2,
                                              pp=True, pm=False,
