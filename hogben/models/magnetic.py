@@ -224,13 +224,14 @@ class SampleYIG(BaseSample, VariableUnderlayer):
         else:
             return yag | yig | intermediary | pt_extra | pt | air
 
-    def angle_info(self, angle_times, contrasts=None):
+    def angle_info(self, angle_times, contrasts=None, inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the YIG sample
            measured over a number of angles.
 
         Args:
             angle_times (list): points and times for each angle to simulate.
             contrasts (list): not applicable.
+            inst_or_path: instrument or path to direct beam file.
 
         Returns:
             numpy.ndarray: Fisher information matrix.
@@ -238,7 +239,8 @@ class SampleYIG(BaseSample, VariableUnderlayer):
         """
         # Simulate the polarised experiment.
         models, datasets = [], []
-
+        # Below script is redundant and needs updating with new
+        # magnetic procedure using Refnx approach
         """simulate_magnetic(self.structure, angle_times,
                                              scale=1, bkg=5e-7, dq=2,
                                              pp=True, pm=False,
@@ -267,6 +269,8 @@ class SampleYIG(BaseSample, VariableUnderlayer):
 
         # Simulate a polarised measurement of the structure.
         models, datasets = [], []
+        # Below script is redundant and needs updating with new
+        # magnetic procedure using Refnx approach
         """simulate_magnetic(structure, angle_times,
                                              scale=1, bkg=5e-7, dq=2,
                                              pp=True, pm=False,

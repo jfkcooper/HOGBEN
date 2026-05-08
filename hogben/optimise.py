@@ -101,7 +101,8 @@ class Optimiser:
                              angle_bounds: tuple = (0.2, 4),
                              points: int = 100,
                              workers: int = -1,
-                             verbose: bool = True) -> tuple:
+                             verbose: bool = True,
+                             inst_or_path: str = 'OFFSPEC') -> tuple:
         """Optimises the measurement angles and associated counting times
            of an experiment, given a fixed time budget.
 
@@ -114,6 +115,9 @@ class Optimiser:
             workers (int): number of CPU cores to use when optimising. Use
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
+            inst_or_path: either the name of an instrument already in HOGBEN,
+                          or the path to a direct beam file, defaults to
+                          'OFFSPEC'
 
         Returns:
             tuple: optimised angles, counting times and the corresponding
@@ -130,7 +134,7 @@ class Optimiser:
         bounds = [angle_bounds] * num_angles + [(0, 1)] * num_angles
 
         # Arguments for the optimisation function.
-        args = [num_angles, contrasts, points, total_time]
+        args = [num_angles, contrasts, points, total_time, inst_or_path]
 
         # Constrain the counting times to sum to the fixed time budget.
         # Also constrain the angles to be in non-decreasing order.
@@ -163,7 +167,8 @@ class Optimiser:
                            total_time: float = 1000,
                            contrast_bounds: tuple = (-0.56, 6.36),
                            workers: int = -1,
-                           verbose: bool = True) -> tuple:
+                           verbose: bool = True,
+                           inst_or_path: str = 'OFFSPEC') -> tuple:
         """Finds the optimal contrasts, given a fixed time budget.
 
         Args:
@@ -174,6 +179,9 @@ class Optimiser:
             workers (int): number of CPU cores to use when optimising. Use
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
+            inst_or_path: either the name of an instrument already in HOGBEN,
+                          or the path to a direct beam file, defaults to
+                          'OFFSPEC'
 
         Returns:
             tuple: optimised contrast SLDs, counting time proportions and the
@@ -210,7 +218,7 @@ class Optimiser:
         ]
 
         # Arguments for the optimisation function.
-        args = [num_contrasts, angle_splits, total_time]
+        args = [num_contrasts, angle_splits, total_time, inst_or_path]
 
         # Optimise contrasts and counting time splits, and return the results.
         res, val = Optimiser.__optimise(
@@ -291,7 +299,8 @@ class Optimiser:
                              thick_bounds=(0, 500),
                              sld_bounds=(1, 9),
                              workers=-1,
-                             verbose=True) -> tuple:
+                             verbose=True,
+                             inst_or_path='OFFSPEC') -> tuple:
         """Finds the optimal underlayer thicknesses and SLDs of a sample.
 
         Args:
@@ -303,6 +312,9 @@ class Optimiser:
             workers (int): number of CPU cores to use when optimising. Use
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
+            inst_or_path: either the name of an instrument already in HOGBEN,
+                          or the path to a direct beam file, defaults to
+                          'OFFSPEC'
 
         Returns:
             tuple: optimised underlayer thicknesses and SLD, and the
@@ -319,7 +331,7 @@ class Optimiser:
         ] * num_underlayers
 
         # Arguments for the optimisation function.
-        args = [num_underlayers, angle_times, contrasts]
+        args = [num_underlayers, angle_times, contrasts, inst_or_path]
 
         # Optimise underlayer thicknesses and SLDs, and return the results.
         res, val = Optimiser.__optimise(
@@ -332,7 +344,8 @@ class Optimiser:
                           num_angles: int,
                           contrasts: list,
                           points: int,
-                          total_time: float) -> float:
+                          total_time: float,
+                          inst_or_path: str = 'OFFSPEC') -> float:
         """Defines the function for optimising an experiment's measurement
            angles and associated counting times.
 
@@ -342,6 +355,7 @@ class Optimiser:
             contrasts (list): contrasts of the experiment, if applicable.
             points (int): number of data points to use for each angle.
             total_time (float): total time budget for experiment.
+            inst_or_path: instrument or path to direct beam file.
 
         Returns:
             float: negative of minimum eigenvalue using given conditions, `x`.
@@ -354,7 +368,7 @@ class Optimiser:
         ]
 
         # Calculate the Fisher information matrix.
-        fisher = self.sample.angle_info(angle_times, contrasts)
+        fisher = self.sample.angle_info(angle_times, contrasts, inst_or_path)
 
         # Return negative of the minimum eigenvalue as algorithm is minimising.
         return -fisher.min_eigenval
@@ -363,7 +377,8 @@ class Optimiser:
                         x: list,
                         num_contrasts: int,
                         angle_splits: type,
-                        total_time: float) -> float:
+                        total_time: float,
+                        inst_or_path: str = 'OFFSPEC') -> float:
         """Defines the function for optimising an experiment's contrasts.
 
         Args:
@@ -371,6 +386,7 @@ class Optimiser:
             num_contrasts (int): number of contrasts being optimised.
             angle_splits (type): points and time splits for each angle.
             total_time (float): total time budget for experiment.
+            inst_or_path: instrument or path to direct beam file.
 
         Returns:
             float: negative of minimum eigenvalue using given conditions.
@@ -391,7 +407,8 @@ class Optimiser:
 
             # Add data from current contrast to Fisher information matrix
             g += self.sample.contrast_info(angle_times,
-                                           [x[i]]).fisher_information
+                                           [x[i]],
+                                           inst_or_path).fisher_information
 
         # Return negative of the minimum eigenvalue as algorithm is minimising.
         return -np.linalg.eigvalsh(g)[0]
@@ -400,7 +417,8 @@ class Optimiser:
                           x: list,
                           num_underlayers: int,
                           angle_times: type,
-                          contrasts: list) -> float:
+                          contrasts: list,
+                          inst_or_path: str = 'OFFSPEC') -> float:
         """Defines the function for optimising an experiment's underlayers.
 
         Args:
@@ -408,6 +426,7 @@ class Optimiser:
             num_underlayers (int): number of underlayers being optimised.
             angle_times (type): points and times for each angle.
             contrasts (list): contrasts of the experiment, if applicable.
+            inst_or_path: instrument or path to direct beam file.
 
         Returns:
             float: negative of minimum eigenvalue using given conditions.
@@ -421,7 +440,7 @@ class Optimiser:
         # Calculate the Fisher information using the conditions.
         fisher = self.sample.underlayer_info(angle_times,
                                              contrasts,
-                                             underlayers)
+                                             underlayers, inst_or_path)
 
         # Return negative of the minimum eigenvalue as algorithm is minimising.
         return -fisher.min_eigenval

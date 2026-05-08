@@ -227,7 +227,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         """Loads the measured data for the lipid sample."""
         pass
 
-    def angle_info(self, angle_times, contrasts):
+    def angle_info(self, angle_times, contrasts=None,
+                   inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample
            measured over a number of angles.
 
@@ -239,9 +240,10 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, None)
+        return self.__conditions_info(angle_times, contrasts, None,
+                                      inst_or_path)
 
-    def contrast_info(self, angle_times, contrasts):
+    def contrast_info(self, angle_times, contrasts, inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample
            with contrasts measured over a number of angles.
 
@@ -253,9 +255,11 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, None)
+        return self.__conditions_info(angle_times, contrasts, None,
+                                      inst_or_path)
 
-    def underlayer_info(self, angle_times, contrasts, underlayers):
+    def underlayer_info(self, angle_times, contrasts, underlayers,
+                        inst_or_path='OFFSPEC'):
         """Calculates the Fisher information matrix for the lipid sample with
            `underlayers`, and `contrasts` measured over a number of angles.
 
@@ -268,9 +272,11 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             numpy.ndarray: Fisher information matrix.
 
         """
-        return self.__conditions_info(angle_times, contrasts, underlayers)
+        return self.__conditions_info(angle_times, contrasts, underlayers,
+                                      inst_or_path)
 
-    def __conditions_info(self, angle_times, contrasts, underlayers):
+    def __conditions_info(self, angle_times, contrasts, underlayers,
+                          inst_or_path='OFFSPEC'):
         """Calculates the Fisher information object for the lipid sample
            with given conditions.
 
@@ -278,6 +284,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             angle_times (list): points and times for each angle to simulate.
             contrasts (list): SLDs of contrasts to simulate.
             underlayers (list): thickness and SLD of each underlayer to add.
+            inst_or_path (str): instrument or path to direct beam file.
 
         Returns:
             Fisher: Fisher information matrix object
@@ -295,7 +302,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             model = ReflectModel(sample)
             model.bkg = background_level
             model.dq = 2
-            data = SimulateReflectivity(model, angle_times).simulate()
+            data = SimulateReflectivity(model, angle_times,
+                                        inst_or_path).simulate()
             qs.append(data[0])
             counts.append(data[3])
             models.append(model)
@@ -418,7 +426,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
                         save_path: str,
                         filename: str,
                         underlayers=None,
-                        dynamic=False) -> None:
+                        dynamic=False,
+                        inst_or_path='OFFSPEC') -> None:
         """Runs nested sampling on simulated data of the lipid sample.
 
         Args:
@@ -428,7 +437,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             filename (str): file name to use when saving corner plot.
             underlayers (list): thickness and SLD of each underlayer to add.
             dynamic (bool): whether to use static or dynamic nested sampling.
-
+            inst_or_path (str): instrument or path to direct beam file.
         """
         # Create objectives for each contrast to sample with.
         objectives = []
@@ -442,7 +451,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             model = ReflectModel(sample)
             model.bkg = background_level
             model.dq = 2
-            data = SimulateReflectivity(model, angle_times).simulate()
+            data = SimulateReflectivity(model, angle_times,
+                                        inst_or_path).simulate()
             
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
