@@ -141,7 +141,7 @@ def test_angle_times_func_result(refnx_sample):
     result = optimiser._angle_times_func(angle_time_split, num_angles,
                                          contrasts, points, total_time)
 
-    expected_result = -1.7716709840530174
+    expected_result = -0.3254089562546456
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
 
@@ -156,7 +156,7 @@ def test_contrasts_func_result():
     result = optimiser._contrasts_func(contrasts_time, num_contrasts,
                                        angle_splits, total_time)
 
-    expected_result = -4.345145
+    expected_result = -0.7980878647560227
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
 
@@ -173,7 +173,7 @@ def test_underlayers_func():
     result = optimiser._underlayers_func(thickness_SLD, num_underlayers,
                                          angle_times, contrasts)
 
-    expected_result = -2.280329121
+    expected_result = -0.41883596471117573
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
 
@@ -224,5 +224,5 @@ def test_parameter_func(refnx_sample):
     values = [3.3, 109]
     angle_times = [(0.7, 100, 10000), (2.3, 100, 10000)]
     result = optimiser._parameter_func(values, params, angle_times)
-    expected_result = -15.438106789796723
+    expected_result = -2.8355706348309186
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)

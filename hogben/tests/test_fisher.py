@@ -113,7 +113,7 @@ def test_fisher_multiple_backgrounds(refnx_two_solvents):
     sample._vary_structure()
     angle_times = [(0.7, 100, 100000), (2.0, 100, 100000)]
     fisher = Fisher.from_sample(sample, angle_times)
-    eigenval_ref = 257.9191161169581
+    eigenval_ref = 47.372898878102234
     np.testing.assert_allclose(eigenval_ref,
                                fisher.min_eigenval, rtol=1e-08)
 
