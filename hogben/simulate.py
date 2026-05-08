@@ -23,7 +23,7 @@ class SimulateReflectivity:
         inst_or_path: either the name of an instrument already in HOGBEN, or
                       the path to a direct beam file, defaults to 'OFFSPEC'
         angle_scale: the angle at which the direct beam was taken (so that it
-                     can be scaled appropriately), defaults to 0.3
+                     can be scaled appropriately), defaults to 0.7
     """
 
     non_pol_instr_dict = {
@@ -44,7 +44,7 @@ class SimulateReflectivity:
         sample_model: refnx.reflect.ReflectModel,
         angle_times: list[tuple] = None,
         inst_or_path: str = 'OFFSPEC',
-        angle_scale: float = 0.3,
+        angle_scale: float = 0.7,
         monochromatic: bool = False,
         mono_angle_range: float = 0.4,
     ):
@@ -63,7 +63,7 @@ class SimulateReflectivity:
             angle_scale: The angle at which the direct beam file was
                          was taken, and therefore how it should be
                          scaled to other angles. All hogben files
-                         are pre-scaled to 0.3 degrees.
+                         are pre-scaled to 0.7 degrees.
             monochromatic: whether the instrument has a monochromatic
                            beam, which necessitates a different
                            calculation of the angle_times
