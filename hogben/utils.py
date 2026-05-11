@@ -271,7 +271,7 @@ class Fisher():
         importance_array = [param.importance if hasattr(param, 'importance')
                             else 1 for param in self.xi]
         importance = np.diag(importance_array)
-        return np.dot(g, importance)
+        return np.dot(np.dot(importance, g), importance)
 
     def _get_gradient_matrix(self) -> np.ndarray:
         """Calculate the gradient matrix.
