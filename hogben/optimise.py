@@ -264,6 +264,9 @@ class Optimiser:
         # Arguments for the optimisation function.
         args = [params, angle_times, inst_or_path]
 
+        if seed is not None:
+            workers = 1
+
         # Optimise parameters and return the results.
         res, val = Optimiser.__optimise(
             self._parameter_func, bounds, [], args, workers, verbose, seed
