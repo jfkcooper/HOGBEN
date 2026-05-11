@@ -484,7 +484,6 @@ class Optimiser:
         # Set numpy random seed for reproducibility
         if seed is not None:
             np.random.seed(seed)
-        
         # Run differential evolution on the given optimisation function.
         res = differential_evolution(func, bounds, constraints=constraints,
                                      args=args, polish=False, tol=0.001,
