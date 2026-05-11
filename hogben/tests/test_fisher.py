@@ -182,19 +182,19 @@ def test_fisher_importance_scaling(mock_reflectivity, mock_model):
     Tests that the values of the calculated Fisher information matrix
     are calculated correctly when an importance scaling is applied.
 
-    The importance scaling is applied by scaling each parameter of the FIM
-    to a given importance value using g_scaled = g * importance
+    The importance scaling is applied symmetrically using:
+    g_scaled = importance @ g @ importance
     Where g is the unscaled FIM, and importance is a diagonal matrix with
     the importance scaling of each parameter on the diagonals. For this unit
     test the importance matrix is equal to:
-    importance = [1, 0 , 0]
+    importance = [1, 0, 0]
                  [0, 2, 0]
-                [0, 0, 3]
-    Yielding a FIM where every column should be scaled by the corresponding
-    diagonal in the importance matrix:
+                 [0, 0, 3]
+    Applying symmetric scaling ensures that both rows and columns are weighted
+    appropriately, resulting in:
     g = [1.28125, 1.025, 76.875],
-        [0.5125, 0.41, 30.75],
-        [25.625, 20.5, 1537.5]
+        [1.025, 0.82, 61.5],
+        [76.875, 61.5, 4612.5]
     """
     xi = mock_model.xi[:3]
     for index, param in enumerate(xi):
@@ -202,8 +202,8 @@ def test_fisher_importance_scaling(mock_reflectivity, mock_model):
     mock_reflectivity.side_effect = generate_reflectivity_data()
     g_correct = [
         [1.28125, 1.025, 76.875],
-        [0.5125, 0.41, 30.75],
-        [25.625, 20.5, 1537.5],
+        [1.025, 0.82, 61.5],
+        [76.875, 61.5, 4612.5],
     ]
     g_reference = Fisher(QS, xi, COUNTS, [mock_model]).fisher_information
     np.testing.assert_allclose(g_reference, g_correct, rtol=1e-08)
