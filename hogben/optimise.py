@@ -19,7 +19,8 @@ from hogben.visualise import scan_parameters
 def optimise_parameters(sample: BaseSample,
                         angle_times: list,
                         inst_or_path: str = 'OFFSPEC',
-                        visualise: bool = True) -> BaseSample:
+                        visualise: bool = True,
+                        seed: Optional[int] = None) -> BaseSample:
     """
     Optimises the given parameters of a sample to the FI.
 
@@ -36,6 +37,8 @@ def optimise_parameters(sample: BaseSample,
                       or the path to a direct beam file, defaults to
                       'OFFSPEC'
         visualise (bool): Whether to generate graphs. Defaults to `True`.
+        seed (int, optional): Random seed for reproducible results. If None,
+                              results are non-deterministic. Defaults to None.
 
     Returns:
         Sample: The sample object with optimised parameters.
@@ -52,7 +55,8 @@ def optimise_parameters(sample: BaseSample,
     optimiser = Optimiser(sample)
     res, val = optimiser.optimise_parameters(angle_times,
                                              inst_or_path=inst_or_path,
-                                             verbose=False)
+                                             verbose=False,
+                                             seed=seed)
     optimize_params = sample.get_param_by_attribute('optimize')
 
     print('The parameters with the highest information could be found at:')
@@ -230,7 +234,8 @@ class Optimiser:
                             angle_times,
                             inst_or_path='OFFSPEC',
                             workers=-1,
-                            verbose=True) -> tuple:
+                            verbose=True,
+                            seed: Optional[int] = None) -> tuple:
         """
         Finds the optimal parameters for a given sample.
 
@@ -243,6 +248,8 @@ class Optimiser:
             workers (int): number of CPU cores to use when optimising. Use
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
+            seed (int, optional): Random seed for reproducible results.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised underlayer parameters and the corresponding
@@ -259,7 +266,7 @@ class Optimiser:
 
         # Optimise parameters and return the results.
         res, val = Optimiser.__optimise(
-            self._parameter_func, bounds, [], args, workers, verbose
+            self._parameter_func, bounds, [], args, workers, verbose, seed
         )
         return res, val
 
@@ -451,7 +458,8 @@ class Optimiser:
                    constraints: list,
                    args: list,
                    workers: int,
-                   verbose: bool) -> tuple:
+                   verbose: bool,
+                   seed: Optional[int] = None) -> tuple:
         """Optimises a given `func` using the differential evolution
            global optimisation algorithm.
 
@@ -463,15 +471,21 @@ class Optimiser:
             workers (int): number of CPU cores to use when optimising. Use
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
+            seed (int, optional): Random seed for reproducible results.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised experimental conditions and function value.
 
         """
+        # Set numpy random seed for reproducibility
+        if seed is not None:
+            np.random.seed(seed)
+        
         # Run differential evolution on the given optimisation function.
         res = differential_evolution(func, bounds, constraints=constraints,
                                      args=args, polish=False, tol=0.001,
                                      updating='deferred', workers=workers,
-                                     disp=verbose)
+                                     disp=verbose, seed=seed)
 
         return res.x, res.fun
