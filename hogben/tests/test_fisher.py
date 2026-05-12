@@ -183,28 +183,30 @@ def test_fisher_importance_scaling(mock_reflectivity, mock_model):
     are calculated correctly when an importance scaling is applied.
 
     The importance scaling is applied symmetrically using:
-    g_scaled = importance @ g @ importance
-    Where g is the unscaled FIM, and importance is a diagonal matrix with
-    the importance scaling of each parameter on the diagonals. For this unit
-    test the importance matrix is equal to:
+    g_scaled = importance_sqrt @ g @ importance_sqrt
+    Where g is the unscaled FIM, and importance_sqrt is a diagonal matrix with
+    the square root of each parameter importance on the diagonals. For this
+    unit test the importance matrix is equal to:
     importance = [1, 0, 0]
                  [0, 2, 0]
                  [0, 0, 3]
     Applying symmetric scaling ensures that both rows and columns are weighted
     appropriately, resulting in:
-    g = [1.28125, 1.025, 76.875],
-        [1.025, 0.82, 61.5],
-        [76.875, 61.5, 4612.5]
+    g = [1.28125, 0.724077, 44.403784],
+        [0.724077, 0.41, 25.099248],
+        [44.403784, 25.099248, 1537.5]
     """
     xi = mock_model.xi[:3]
     for index, param in enumerate(xi):
         param.importance = index + 1
     mock_reflectivity.side_effect = generate_reflectivity_data()
-    g_correct = [
-        [1.28125, 1.025, 76.875],
-        [1.025, 0.82, 61.5],
-        [76.875, 61.5, 4612.5],
-    ]
+    g_original = np.array([
+        [1.28125, 0.5125, 25.625],
+        [0.5125, 0.205, 10.25],
+        [25.625, 10.25, 512.5],
+    ])
+    importance = np.sqrt(np.diag([1, 2, 3]))
+    g_correct = importance @ g_original @ importance
     g_reference = Fisher(QS, xi, COUNTS, [mock_model]).fisher_information
     np.testing.assert_allclose(g_reference, g_correct, rtol=1e-08)
 
