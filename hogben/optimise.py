@@ -106,7 +106,8 @@ class Optimiser:
                              points: int = 100,
                              workers: int = -1,
                              verbose: bool = True,
-                             inst_or_path: str = 'OFFSPEC') -> tuple:
+                             inst_or_path: str = 'OFFSPEC',
+                             seed: Optional[int] = None) -> tuple:
         """Optimises the measurement angles and associated counting times
            of an experiment, given a fixed time budget.
 
@@ -122,6 +123,8 @@ class Optimiser:
             inst_or_path: either the name of an instrument already in HOGBEN,
                           or the path to a direct beam file, defaults to
                           'OFFSPEC'
+            seed (int, optional): random seed for reproducible behaviour.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised angles, counting times and the corresponding
