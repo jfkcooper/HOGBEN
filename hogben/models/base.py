@@ -497,3 +497,4 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         # Save the sampling corner plot.
         save_path = os.path.join(save_path, self.name)
         save_plot(fig, save_path, 'nested_sampling_' + filename)
+        

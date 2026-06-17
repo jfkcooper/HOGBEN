@@ -59,7 +59,8 @@ def refnx_magnetic_structure():
     air = SLD(0, name='Air')
     layer1 = SLD(3, name='Layer 1')(thick=60, rough=8)
     layer2 = SLD(8, name='Layer 2')(thick=150, rough=2)
-    mag_layer = MagneticSlab(75, 6, rough=2, rhoM=2, thetaM=90, name='Magnetic layer')
+    mag_layer = MagneticSlab(75, 6, rough=2,
+                              rhoM=2, thetaM=90, name='Magnetic layer')
     substrate = SLD(2.047, name='Substrate')(thick=0, rough=2)
     structure = air | layer1 | layer2 | mag_layer | substrate
     return structure
@@ -68,15 +69,16 @@ def refnx_magnetic_structure():
 @pytest.fixture
 def refnx_magnetic_structure_multiple_layers():
     """Defines a structure describing a sample with one magnetic layer."""
-    air = SLD(0, name='Air')
-    D2O = SLD(6.5, name='Air')
+    H2O = SLD(-0.56, name='H2O')
+    D2O = SLD(6.36, name='D2O')
     layer1 = SLD(3, name='Layer 1')(thick=60, rough=8)
     layer2 = MagneticSlab(150, 8, rough=2, rhoM=2, thetaM=90, name='Layer 2')
-    mag_layer = MagneticSlab(75, 6, rough=2, rhoM=2, thetaM=90, name='Magnetic layer')
+    mag_layer = MagneticSlab(75, 6, rough=2,
+                              rhoM=2, thetaM=90, name='Magnetic layer')
     substrate = SLD(2.047, name='Substrate')(thick=0, rough=2)
     structure_D2O = D2O | layer1 | layer2 | mag_layer | substrate
-    structure = air | layer1 | layer2 | mag_layer | substrate
-    return [structure, structure_D2O]
+    structure_H2O = H2O | layer1 | layer2 | mag_layer | substrate
+    return [structure_H2O, structure_D2O]
 
 
 def mock_save_plot(fig: matplotlib.figure.Figure,
