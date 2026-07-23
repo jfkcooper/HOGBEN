@@ -157,10 +157,15 @@ class BaseSample(VariableAngle):
     def _spin_structure(self, slab, spin):
         """Convert a refnx MagneticSlab into a spin-dependent Slab."""
         sld_param = slab.sld.parameters[0]
+    
         if spin == 'up':
             sld_value = sld_param + slab.rhoM
-        else:
+    
+        elif spin == 'down':
             sld_value = sld_param - slab.rhoM
+    
+        else:
+            raise ValueError("spin must be 'up' or 'down'")
 
         return Slab(
             thick=slab.thick,
