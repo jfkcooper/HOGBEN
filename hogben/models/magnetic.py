@@ -259,3 +259,4 @@ class SampleYIG(BaseSample, VariableUnderlayer):
 
         save_path = os.path.join(save_path, self.name)
         save_plot(fig, save_path, 'nested_sampling_' + filename)
+        
