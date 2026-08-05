@@ -165,7 +165,8 @@ class Optimiser:
 
         # Optimise angles and times, and return the results.
         res, val = Optimiser.__optimise(self._angle_times_func, bounds,
-                                        constraints, args, workers, verbose)
+                                        constraints, args, workers, verbose,
+                                        seed)
         return res[:num_angles], res[num_angles:], val
 
     def optimise_contrasts(self,
