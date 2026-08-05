@@ -101,9 +101,8 @@ class BaseSample(VariableAngle):
     def is_magnetic(self) -> bool:
         """Checks whether the sample contains at least one magnetic layer"""
         for structure in self._structures:
-            for layer in structure:
-                if isinstance(layer, MagneticSlab):
-                    return True
+            if getattr(structure, 'is_magnetic', False):
+                return True
         return False
 
     def get_param_by_attribute(self, attr: str) -> list:
