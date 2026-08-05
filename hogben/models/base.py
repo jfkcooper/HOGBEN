@@ -12,7 +12,7 @@ import refnx.dataset
 import refnx.reflect
 import refnx.analysis
 from refnx.reflect import ReflectModel
-from refnx.reflect.structure import Slab, MagneticSlab as RefMagneticSlab
+from refnx.reflect.structure import Slab, MagneticSlab as MagneticSlab
 from refnx._lib import flatten
 
 from hogben.simulate import SimulateReflectivity
@@ -79,7 +79,7 @@ class BaseSample(VariableAngle):
                 up_structure = structure.copy()
                 down_structure = structure.copy()
                 for i, layer in enumerate(structure):
-                    if isinstance(layer, RefMagneticSlab):
+                    if isinstance(layer, MagneticSlab):
                         up_structure[i] = self._spin_structure(layer, 'up')
                         down_structure[i] = self._spin_structure(layer, 'down')
                 if self.is_magnetic():
@@ -102,7 +102,7 @@ class BaseSample(VariableAngle):
         """Checks whether the sample contains at least one magnetic layer"""
         for structure in self._structures:
             for layer in structure:
-                if isinstance(layer, RefMagneticSlab):
+                if isinstance(layer, MagneticSlab):
                     return True
         return False
 
