@@ -11,7 +11,7 @@ import numpy as np
 import refnx.dataset
 import refnx.reflect
 import refnx.analysis
-from refnx.reflect import ReflectModel
+from refnx.reflect import ReflectModel, PolarisedReflectModel
 from refnx.reflect.structure import Slab, MagneticSlab as MagneticSlab
 from refnx._lib import flatten
 
@@ -142,11 +142,20 @@ class BaseSample(VariableAngle):
         )
 
         return [
-            refnx.reflect.ReflectModel(
-                structure,
-                scale=scale,
-                bkg=bkg,
-                dq=dq,
+            (
+                PolarisedReflectModel(
+                    structure,
+                    scales=scale,
+                    bkgs=bkg,
+                    dq=dq,
+                )
+                if self.is_magnetic()
+                else ReflectModel(
+                    structure,
+                    scale=scale,
+                    bkg=bkg,
+                    dq=dq,
+                )
             )
             for structure, scale, bkg, dq in zip(
                 self.structures, self.scale, self.bkg, dq_iter
@@ -320,9 +329,21 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             contrast_point = (contrast + 0.56) / (6.35 + 0.56)
             background_level = (2e-6 * contrast_point
                                 + 4e-6 * (1 - contrast_point))
-            model = ReflectModel(sample)
-            model.bkg = background_level
-            model.dq = 2
+            model = (
+                PolarisedReflectModel(
+                    sample,
+                    scales=1.0,
+                    bkgs=background_level,
+                    dq=2,
+                )
+                if self.is_magnetic()
+                else ReflectModel(
+                    sample,
+                    scale=1.0,
+                    bkg=background_level,
+                    dq=2,
+                )
+            )
             data = SimulateReflectivity(model, angle_times,
                                         inst_or_path).simulate()
             qs.append(data[0])
@@ -469,9 +490,21 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             background_level = 2e-6 * contrast_point + 4e-6 * (
                 1 - contrast_point)
 
-            model = ReflectModel(sample)
-            model.bkg = background_level
-            model.dq = 2
+            model = (
+                PolarisedReflectModel(
+                    sample,
+                    scales=1.0,
+                    bkgs=background_level,
+                    dq=2,
+                )
+                if self.is_magnetic()
+                else ReflectModel(
+                    sample,
+                    scale=1.0,
+                    bkg=background_level,
+                    dq=2,
+                )
+            )
             data = SimulateReflectivity(model, angle_times,
                                         inst_or_path).simulate()
             
