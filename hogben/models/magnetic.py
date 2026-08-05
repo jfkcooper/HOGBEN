@@ -8,7 +8,7 @@ import refnx.analysis
 import refnx.dataset
 import refnx.reflect
 from refnx.analysis import Parameter
-from refnx.reflect import ReflectModel, SLD
+from refnx.reflect import ReflectModel, PolarisedReflectModel, SLD
 from refnx.reflect.structure import MagneticSlab, Slab
 
 from hogben.models.base import BaseSample, VariableUnderlayer
@@ -109,8 +109,11 @@ class SampleYIG(BaseSample, VariableUnderlayer):
             self.scale,
             self.bkg,
         ):
-            model = ReflectModel(
-                structure, scale=scale, bkg=bkg, dq=self.dq[0]
+            model = PolarisedReflectModel(
+                structure,
+                scales=scale,
+                bkgs=bkg,
+                dq=self.dq[0],
             )
             data = refnx.dataset.ReflectDataset(file_path)
             self.objectives.append(refnx.analysis.Objective(model, data))
@@ -242,7 +245,7 @@ class SampleYIG(BaseSample, VariableUnderlayer):
         """Run nested sampling on the measured YIG sample."""
         objectives = []
         for structure in self.structures:
-            model = ReflectModel(structure)
+            model = PolarisedReflectModel(structure)
             data = refnx.dataset.ReflectDataset(
                 os.path.join(
                     self.data_path,
