@@ -8,7 +8,7 @@ import refnx.analysis
 import refnx.dataset
 import refnx.reflect
 from refnx.analysis import Parameter
-from refnx.reflect import ReflectModel, PolarisedReflectModel, SLD
+from refnx.reflect import PolarisedReflectModel, SLD
 from refnx.reflect.structure import MagneticSlab, Slab
 
 from hogben.models.base import BaseSample, VariableUnderlayer
