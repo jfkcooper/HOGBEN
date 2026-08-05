@@ -124,7 +124,6 @@ class Optimiser:
                           or the path to a direct beam file, defaults to
                           'OFFSPEC'
             seed (int, optional): random seed for reproducible behaviour.
-                                  Defaults to None.
 
         Returns:
             tuple: optimised angles, counting times and the corresponding
@@ -267,9 +266,6 @@ class Optimiser:
             bounds += [(parameter.bounds.lb, parameter.bounds.ub)]
         # Arguments for the optimisation function.
         args = [params, angle_times, inst_or_path]
-
-        if seed is not None:
-            workers = 1
 
         # Optimise parameters and return the results.
         res, val = Optimiser.__optimise(
@@ -479,15 +475,11 @@ class Optimiser:
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
             seed (int, optional): Random seed for reproducible results.
-                                  Defaults to None.
 
         Returns:
             tuple: optimised experimental conditions and function value.
 
         """
-        # Set numpy random seed for reproducibility
-        if seed is not None:
-            np.random.seed(seed)
         # Run differential evolution on the given optimisation function.
         res = differential_evolution(func, bounds, constraints=constraints,
                                      args=args, polish=False, tol=0.001,
