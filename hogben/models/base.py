@@ -205,6 +205,84 @@ class BaseSample(VariableAngle):
         ax.set_xlim(0, 1.05 * current_xmax)
         ax.legend()
 
+    def plot_sensitivity_profile(self, q=None, counts=None, show=True,
+                                 ax=None):
+        """Plot the average squared sensitivity divided by reflectivity.
+
+        For each Q value the sensitivity is calculated as the mean of the
+        squared parameter gradients, where each parameter is normalized by its
+        importance value (defaulting to 1 if not set) and then divided by the
+        reflectivity at that Q point.
+
+        Args:
+            q (array-like): Q values to evaluate. Defaults to a logarithmic
+                span from 0.001 to 0.3 Å^-1.
+            counts (array-like): incident count values corresponding to each Q
+                point. Defaults to 100 for every point.
+            show (bool): whether to display the plot immediately.
+            ax (matplotlib.axes.Axes): optional axes object to draw on.
+
+        Returns:
+            matplotlib.axes.Axes: the axes containing the sensitivity profile.
+        """
+        if q is None:
+            q = np.geomspace(0.001, 0.3, 1000)
+        q = np.asarray(q, dtype=float)
+        if q.ndim != 1:
+            raise ValueError('q must be a one-dimensional array')
+
+        xi = self.get_param_by_attribute('vary')
+        if len(xi) == 0:
+            xi = self.get_param_by_attribute('optimize')
+        if len(xi) == 0:
+            raise ValueError('No varying parameters are available for plotting')
+
+        models = self.get_models()
+        if not models:
+            raise ValueError('No models are available for plotting')
+
+        if ax is None:
+            fig, ax = plt.subplots()
+
+        for index, model in enumerate(models):
+            q_values = q.copy()
+            q_values = np.asarray(q_values, dtype=float)
+            if counts is None:
+                counts_values = np.ones_like(q_values) * 100
+            else:
+                counts_values = np.asarray(counts, dtype=float)
+                if counts_values.ndim == 0:
+                    counts_values = np.full_like(q_values, float(counts_values))
+                if counts_values.ndim == 1 and counts_values.shape[0] == 1:
+                    counts_values = np.full_like(q_values, counts_values[0])
+                if counts_values.ndim == 1 and counts_values.shape[0] != q_values.shape[0]:
+                    raise ValueError('counts must have the same length as q')
+
+            fisher = Fisher(qs=[q_values], xi=xi, counts=[counts_values],
+                            models=[model])
+            J = fisher._get_gradient_matrix()
+            reflectivity = SimulateReflectivity(model).reflectivity(q_values)
+
+            importance = np.array([
+                param.importance if hasattr(param, 'importance') else 1
+                for param in xi
+            ], dtype=float)
+            sensitivity = np.mean((J ** 2) / importance[np.newaxis, :], axis=1)
+            sensitivity /= np.clip(np.abs(reflectivity), 1e-30, None)
+
+            label = self.labels[index] if len(self.labels) > 1 else 'Sensitivity'
+            ax.plot(q_values, sensitivity, label=label)
+
+        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$')
+        ax.set_ylabel('Average $J^2$ / reflectivity')
+        ax.set_title('Sensitivity profile')
+        ax.set_yscale('log')
+        ax.set_xlim(q.min(), q.max())
+
+        if show:
+            plt.show()
+        return ax
+
     @abstractmethod
     def nested_sampling(self):
         """Runs nested sampling on measured or simulated data of the sample."""
