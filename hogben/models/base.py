@@ -12,7 +12,7 @@ import refnx.dataset
 import refnx.reflect
 import refnx.analysis
 from refnx.reflect import ReflectModel, PolarisedReflectModel
-from refnx.reflect.structure import Slab, MagneticSlab as MagneticSlab
+from refnx.reflect.structure import Slab, MagneticSlab
 from refnx._lib import flatten
 
 from hogben.simulate import SimulateReflectivity
