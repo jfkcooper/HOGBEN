@@ -264,9 +264,11 @@ class BaseSample(VariableAngle):
             reflectivity = SimulateReflectivity(model).reflectivity(q_values)
 
             importance = np.array([
-                param.importance if hasattr(param, 'importance') else 1
+                (param.importance
+                    if hasattr(param, 'importance')
+                    else 1)
                 for param in xi],
-                dtype=float)
+            dtype=float)
             sensitivity = np.mean((J ** 2) / importance[np.newaxis, :], axis=1)
             sensitivity /= np.clip(np.abs(reflectivity), 1e-30, None)
 
