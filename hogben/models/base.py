@@ -278,6 +278,8 @@ class BaseSample(VariableAngle):
         ax.set_title('Sensitivity profile')
         ax.set_yscale('log')
         ax.set_xlim(q.min(), q.max())
+        if len(models) > 1:
+            ax.legend()
 
         if show:
             plt.show()
