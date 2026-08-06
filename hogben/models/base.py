@@ -274,7 +274,7 @@ class BaseSample(VariableAngle):
             ax.plot(q_values, sensitivity, label=label)
 
         ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$')
-        ax.set_ylabel('Average $J^2$ / reflectivity')
+        ax.set_ylabel('Sensitivity (Arb. Units)')
         ax.set_title('Sensitivity profile')
         ax.set_yscale('log')
         ax.set_xlim(q.min(), q.max())
