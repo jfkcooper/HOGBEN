@@ -154,6 +154,49 @@ class BaseSample(VariableAngle):
             )
         ]
     
+    def simulate_reflectivity(self, angle_times,
+                                  inst_or_path='OFFSPEC') -> None:
+            """
+            Plot a simulated reflectivity curve given a set of `angle_times` and
+            the neutron instrument.
+    
+            Args:
+                angle_times (list): points and times for each angle.
+                inst_or_path (str): either the name of an instrument already in ,
+                                    HOGBEN or the path to a direct beam file,
+                                    defaults to 'OFFSPEC'
+    
+            """
+            if not isinstance(angle_times[0], list):
+                angle_times = [angle_times for _ in self.get_models()]
+    
+            # Plot the model and simulated reflectivity against Q.
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+            current_xmax = 0
+    
+            for i, model in enumerate(self.get_models()):
+                data = SimulateReflectivity(model, angle_times[i],
+                                            inst_or_path).simulate()
+                # Extract each column of the simulated `data`.
+                q, r, dr, _ = data[0], data[1], data[2], data[3]
+    
+                # Calculate the model reflectivity.
+                r_model = SimulateReflectivity(model, angle_times[i],
+                                               inst_or_path).reflectivity(q)
+    
+                label = f', {self.labels[i]}' if len(self.structures) > 1 else ''
+    
+                # Model reflectivity.
+                ax.plot(q, r_model, zorder=20, label=f'Model Reflectivity{label}')
+    
+                # Simulated reflectivity
+                ax.errorbar(q, r, dr, marker='o', ms=3, lw=0,
+                            elinewidth=1, capsize=1.5, label='Simulated Data'
+                                                             f'{label}')
+                if max(q) > current_xmax:
+                    current_xmax = max(q)
+
     def plot_sensitivity_profile(self, q=None, counts=None, show=True,
                                 ax=None):
         """
