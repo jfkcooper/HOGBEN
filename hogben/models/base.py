@@ -153,61 +153,11 @@ class BaseSample(VariableAngle):
                 self.structures, self.scale, self.bkg, dq_iter
             )
         ]
-
-    def simulate_reflectivity(self, angle_times,
-                              inst_or_path='OFFSPEC') -> None:
-        """
-        Plot a simulated reflectivity curve given a set of `angle_times` and
-        the neutron instrument.
-
-        Args:
-            angle_times (list): points and times for each angle.
-            inst_or_path (str): either the name of an instrument already in ,
-                                HOGBEN or the path to a direct beam file,
-                                defaults to 'OFFSPEC'
-
-        """
-        if not isinstance(angle_times[0], list):
-            angle_times = [angle_times for _ in self.get_models()]
-
-        # Plot the model and simulated reflectivity against Q.
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        current_xmax = 0
-
-        for i, model in enumerate(self.get_models()):
-            data = SimulateReflectivity(model, angle_times[i],
-                                        inst_or_path).simulate()
-            # Extract each column of the simulated `data`.
-            q, r, dr, _ = data[0], data[1], data[2], data[3]
-
-            # Calculate the model reflectivity.
-            r_model = SimulateReflectivity(model, angle_times[i],
-                                           inst_or_path).reflectivity(q)
-
-            label = f', {self.labels[i]}' if len(self.structures) > 1 else ''
-
-            # Model reflectivity.
-            ax.plot(q, r_model, zorder=20, label=f'Model Reflectivity{label}')
-
-            # Simulated reflectivity
-            ax.errorbar(q, r, dr, marker='o', ms=3, lw=0,
-                        elinewidth=1, capsize=1.5, label='Simulated Data'
-                                                         f'{label}')
-            if max(q) > current_xmax:
-                current_xmax = max(q)
-
-        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$',
-                      weight='bold')
-        ax.set_ylabel('Reflectivity (arb.)', weight='bold')
-        ax.set_yscale('log')
-        ax.set_title('Reflectivity Profile')
-        ax.set_xlim(0, 1.05 * current_xmax)
-        ax.legend()
-
+    
     def plot_sensitivity_profile(self, q=None, counts=None, show=True,
-                                 ax=None):
-        """Plot the average squared sensitivity divided by reflectivity.
+                                ax=None):
+        """
+        Plot the average squared sensitivity divided by reflectivity.
 
         For each Q value the sensitivity is calculated as the mean of the
         squared parameter gradients, where each parameter is normalized by its
@@ -218,7 +168,7 @@ class BaseSample(VariableAngle):
             q (array-like): Q values to evaluate. Defaults to a logarithmic
                 span from 0.001 to 0.3 Å^-1.
             counts (array-like): incident count values corresponding to each Q
-                point. Defaults to 100 for every point.
+                point. Currently unused.
             show (bool): whether to display the plot immediately.
             ax (matplotlib.axes.Axes): optional axes object to draw on.
 
@@ -227,54 +177,117 @@ class BaseSample(VariableAngle):
         """
         if q is None:
             q = np.geomspace(0.001, 0.3, 1000)
-        q = np.asarray(q, dtype=float)
-        if q.ndim != 1:
-            raise ValueError('q must be a one-dimensional array')
 
-        xi = self.get_param_by_attribute('vary')
+        q = np.asarray(q, dtype=float)
+
+        if q.ndim != 1:
+            raise ValueError("q must be a one-dimensional array")
+
+        xi = self.get_param_by_attribute("vary")
+
         if len(xi) == 0:
-            xi = self.get_param_by_attribute('optimize')
+            xi = self.get_param_by_attribute("optimize")
+
         if len(xi) == 0:
-            raise ValueError('No varying parameters are available for plotting')
+            raise ValueError(
+                "No varying parameters are available for plotting"
+            )
 
         models = self.get_models()
+
         if not models:
-            raise ValueError('No models are available for plotting')
+            raise ValueError("No models are available for plotting")
 
         if ax is None:
-            fig, ax = plt.subplots()
+            _, ax = plt.subplots()
+
+        ax_reflectivity = ax.twinx()
 
         for index, model in enumerate(models):
-            q_values = q.copy()
-            q_values = np.asarray(q_values, dtype=float)
-            fisher = Fisher(qs=[q_values], xi=xi, counts=None,
-                            models=[model])
+
+            q_values = np.asarray(q.copy(), dtype=float)
+
+            fisher = Fisher(
+                qs=[q_values],
+                xi=xi,
+                counts=None,
+                models=[model]
+            )
+
             J = fisher._get_gradient_matrix()
-            reflectivity = SimulateReflectivity(model).reflectivity(q_values)
 
-            importance = np.array([
-                (param.importance
-                    if hasattr(param, 'importance')
-                    else 1)
-                for param in xi],
-            dtype=float)
-            sensitivity = np.mean((J ** 2) / importance[np.newaxis, :], axis=1)
-            sensitivity /= np.clip(np.abs(reflectivity), 1e-30, None)
+            reflectivity = (
+                SimulateReflectivity(model)
+                .reflectivity(q_values)
+            )
 
-            label = self.labels[index] if len(self.labels) > 1 else 'Sensitivity'
-            ax.plot(q_values, sensitivity, label=label)
+            importance = np.array(
+                [
+                    param.importance
+                    if hasattr(param, "importance")
+                    else 1.0
+                    for param in xi
+                ],
+                dtype=float
+            )
 
-        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$')
-        ax.set_ylabel('Sensitivity (Arb. Units)')
-        ax.set_title('Sensitivity profile')
-        ax.set_yscale('log')
+            sensitivity = np.mean(
+                (J ** 2) / importance[np.newaxis, :],
+                axis=1
+            )
+
+            sensitivity /= np.clip(
+                np.abs(reflectivity),
+                1e-30,
+                None
+            )
+
+            base_label = (
+                self.labels[index]
+                if len(self.labels) > index
+                else f"Model {index + 1}"
+            )
+
+            sens_line, = ax.plot(
+                q_values,
+                sensitivity,
+                label=f"{base_label} Sensitivity"
+            )
+
+            ax_reflectivity.plot(
+                q_values,
+                np.abs(reflectivity),
+                linestyle="--",
+                color=sens_line.get_color(),
+                alpha=0.8,
+                label=f"{base_label} Reflectivity"
+            )
+
+        ax.set_xlabel(r"$\mathregular{Q\ (Å^{-1})}$")
+        ax.set_ylabel("Sensitivity (Arb. Units)")
+        ax_reflectivity.set_ylabel("Reflectivity")
+
+        ax.set_title("Sensitivity Profile")
+
+        ax.set_yscale("log")
+        ax_reflectivity.set_yscale("log")
+
         ax.set_xlim(q.min(), q.max())
-        if len(models) > 1:
-            ax.legend()
+
+        lines1, labels1 = ax.get_legend_handles_labels()
+        lines2, labels2 = ax_reflectivity.get_legend_handles_labels()
+
+        ax.legend(
+            lines1 + lines2,
+            labels1 + labels2,
+            loc="best"
+        )
 
         if show:
             plt.show()
+
         return ax
+
 
     @abstractmethod
     def nested_sampling(self):
