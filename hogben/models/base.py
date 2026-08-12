@@ -247,18 +247,7 @@ class BaseSample(VariableAngle):
         for index, model in enumerate(models):
             q_values = q.copy()
             q_values = np.asarray(q_values, dtype=float)
-            if counts is None:
-                counts_values = np.ones_like(q_values) * 100
-            else:
-                counts_values = np.asarray(counts, dtype=float)
-                if counts_values.ndim == 0:
-                    counts_values = np.full_like(q_values, float(counts_values))
-                if counts_values.ndim == 1 and counts_values.shape[0] == 1:
-                    counts_values = np.full_like(q_values, counts_values[0])
-                if counts_values.ndim == 1 and counts_values.shape[0] != q_values.shape[0]:
-                    raise ValueError('counts must have the same length as q')
-
-            fisher = Fisher(qs=[q_values], xi=xi, counts=[counts_values],
+            fisher = Fisher(qs=[q_values], xi=xi, counts=None,
                             models=[model])
             J = fisher._get_gradient_matrix()
             reflectivity = SimulateReflectivity(model).reflectivity(q_values)
