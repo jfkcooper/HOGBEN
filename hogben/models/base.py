@@ -161,7 +161,6 @@ class BaseSample(VariableAngle):
                 self.structures, self.scale, self.bkg, dq_iter
             )
         ]
-    
 
     def _spin_structure(self, slab, spin):
         """Convert a refnx MagneticSlab into a spin-dependent Slab."""
@@ -229,7 +228,7 @@ class BaseSample(VariableAngle):
                     current_xmax = max(q)
 
     def plot_sensitivity_profile(self, q=None, counts=None, show=True,
-                                ax=None):
+                                 ax=None):
         """
         Plot the average squared sensitivity divided by reflectivity.
 
@@ -255,22 +254,22 @@ class BaseSample(VariableAngle):
         q = np.asarray(q, dtype=float)
 
         if q.ndim != 1:
-            raise ValueError("q must be a one-dimensional array")
+            raise ValueError('q must be a one-dimensional array')
 
-        xi = self.get_param_by_attribute("vary")
+        xi = self.get_param_by_attribute('vary')
 
         if len(xi) == 0:
-            xi = self.get_param_by_attribute("optimize")
+            xi = self.get_param_by_attribute('optimize')
 
         if len(xi) == 0:
             raise ValueError(
-                "No varying parameters are available for plotting"
+                'No varying parameters are available for plotting'
             )
 
         models = self.get_models()
 
         if not models:
-            raise ValueError("No models are available for plotting")
+            raise ValueError('No models are available for plotting')
 
         if ax is None:
             _, ax = plt.subplots()
@@ -285,66 +284,64 @@ class BaseSample(VariableAngle):
                 qs=[q_values],
                 xi=xi,
                 counts=None,
-                models=[model]
+                models=[model],
             )
 
             J = fisher._get_gradient_matrix()
 
-            reflectivity = (
-                SimulateReflectivity(model)
-                .reflectivity(q_values)
-            )
+            reflectivity = SimulateReflectivity(
+                model
+            ).reflectivity(q_values)
 
             importance = np.array(
                 [
                     param.importance
-                    if hasattr(param, "importance")
+                    if hasattr(param, 'importance')
                     else 1.0
                     for param in xi
                 ],
-                dtype=float
+                dtype=float,
             )
 
             sensitivity = np.mean(
                 (J ** 2) / importance[np.newaxis, :],
-                axis=1
+                axis=1,
             )
 
             sensitivity /= np.clip(
                 np.abs(reflectivity),
                 1e-30,
-                None
+                None,
             )
 
-            base_label = (
-                self.labels[index]
-                if len(self.labels) > index
-                else f"Model {index + 1}"
-            )
+            if len(self.labels) > index:
+                base_label = self.labels[index]
+            else:
+                base_label = f'Model {index + 1}'
 
             sens_line, = ax.plot(
                 q_values,
                 sensitivity,
-                label=f"{base_label} Sensitivity"
+                label=f'{base_label} Sensitivity',
             )
 
             ax_reflectivity.plot(
                 q_values,
                 np.abs(reflectivity),
-                linestyle="--",
+                linestyle='--',
                 color=sens_line.get_color(),
                 alpha=0.8,
-                label=f"{base_label} Reflectivity"
+                label=f'{base_label} Reflectivity',
             )
 
-        ax.set_xlabel(r"$\mathregular{Q\ (Å^{-1})}$")
-        ax.set_ylabel("Sensitivity (Arb. Units)")
-        ax_reflectivity.set_ylabel("Reflectivity")
+        ax.set_xlabel(r'$\mathregular{Q\ (Å^{-1})}$')
+        ax.set_ylabel('Sensitivity (Arb. Units)')
+        ax_reflectivity.set_ylabel('Reflectivity')
 
-        ax.set_title("Sensitivity Profile")
+        ax.set_title('Sensitivity Profile')
 
-        ax.set_yscale("log")
-        ax_reflectivity.set_yscale("log")
+        ax.set_yscale('log')
+        ax_reflectivity.set_yscale('log')
 
         ax.set_xlim(q.min(), q.max())
 
@@ -354,7 +351,7 @@ class BaseSample(VariableAngle):
         ax.legend(
             lines1 + lines2,
             labels1 + labels2,
-            loc="best"
+            loc='best',
         )
 
         if show:
