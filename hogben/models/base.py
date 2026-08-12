@@ -221,8 +221,9 @@ class BaseSample(VariableAngle):
 
             # Simulated reflectivity
             ax.errorbar(q, r, dr, marker='o', ms=3, lw=0,
-                        elinewidth=1, capsize=1.5, label='Simulated Data'
-                                                            f'{label}')
+                        elinewidth=1, capsize=1.5,
+                        label=f'Simulated Data{label}',
+                        )
             if max(q) > current_xmax:
                 current_xmax = max(q)
 
