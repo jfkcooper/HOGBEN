@@ -226,3 +226,53 @@ def test_parameter_func(refnx_sample):
     result = optimiser._parameter_func(values, params, angle_times)
     expected_result = -2.8355706348309186
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
+
+@patch('hogben.optimise.differential_evolution')
+def test_optimise_forwards_seed(mock_de):
+    """
+    Ensure the internal __optimise method forwards the seed argument to
+    scipy.optimize.differential_evolution. The DE call is mocked so the test
+    is very fast.
+    """
+    mock_de.return_value = MagicMock(
+        x=np.array([0.1, 0.2]),
+        fun=-0.5,
+    )
+
+    def dummy_func(x, *args):
+        return 0.0
+
+    bounds = [(0.0, 1.0), (0.0, 1.0)]
+    constraints = None
+    args = []
+    workers = 1
+    verbose = False
+
+    seed_value = 12345
+
+    result_x, result_fun = Optimiser._Optimiser__optimise(
+        dummy_func,
+        bounds,
+        constraints,
+        args,
+        workers,
+        verbose,
+        seed=seed_value,
+    )
+
+    assert mock_de.called, (
+        'scipy.optimize.differential_evolution was not called'
+    )
+
+    de_kwargs = mock_de.call_args[1]
+
+    assert 'seed' in de_kwargs, (
+        'seed was not forwarded to differential_evolution'
+    )
+
+    assert de_kwargs['seed'] == seed_value, (
+        'seed forwarded to differential_evolution is incorrect'
+    )
+
+    assert np.allclose(result_x, mock_de.return_value.x)
+    assert result_fun == mock_de.return_value.fun
