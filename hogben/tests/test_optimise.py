@@ -227,6 +227,7 @@ def test_parameter_func(refnx_sample):
     expected_result = -2.8355706348309186
     np.testing.assert_allclose(result, expected_result, rtol=1e-06)
 
+
 @patch('hogben.optimise.differential_evolution')
 def test_optimise_forwards_seed(mock_de):
     """
