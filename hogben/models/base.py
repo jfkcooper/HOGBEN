@@ -3,13 +3,13 @@
 import os
 from abc import ABC, abstractmethod
 from typing import Optional
+from itertools import repeat
 
 import matplotlib.pyplot as plt
 
 import numpy as np
 
 import refnx.dataset
-import refnx.reflect
 import refnx.analysis
 from refnx.reflect import ReflectModel, PolarisedReflectModel
 from refnx.reflect.structure import Slab, MagneticSlab
@@ -17,7 +17,6 @@ from refnx._lib import flatten
 
 from hogben.simulate import SimulateReflectivity
 from hogben.utils import Fisher, Sampler, save_plot
-from itertools import repeat
 
 
 plt.rcParams['figure.figsize'] = (9, 7)
@@ -32,7 +31,6 @@ class VariableAngle(ABC):
     def angle_info(self):
         """Calculates the Fisher information matrix for a sample measured
         over a number of angles."""
-        pass
 
 
 class VariableContrast(ABC):
@@ -43,8 +41,6 @@ class VariableContrast(ABC):
     def contrast_info(self):
         """Calculates the Fisher information matrix for a sample with contrasts
            measured over a number of angles."""
-        pass
-
 
 class VariableUnderlayer(ABC):
     """Abstract class representing whether the underlayer(s) of a sample
@@ -54,7 +50,6 @@ class VariableUnderlayer(ABC):
     def underlayer_info(self):
         """Calculates the Fisher information matrix for a sample with
         underlayers, and contrasts measured over a number of angles."""
-        pass
 
 
 class BaseSample(VariableAngle):
@@ -224,11 +219,10 @@ class BaseSample(VariableAngle):
                         elinewidth=1, capsize=1.5,
                         label=f'Simulated Data{label}',
                         )
-            if max(q) > current_xmax:
-                current_xmax = max(q)
+            current_xmax = max(current_xmax, q)
 
-    def plot_sensitivity_profile(self, q=None, counts=None, show=True,
-                                 ax=None):
+    def plot_sensitivity_profile(self, q=None, show=True,
+                                 ax=None, min_sensitivity=1e-20):
         """
         Plot the average squared sensitivity divided by reflectivity.
 
@@ -240,10 +234,10 @@ class BaseSample(VariableAngle):
         Args:
             q (array-like): Q values to evaluate. Defaults to a logarithmic
                 span from 0.001 to 0.3 Å^-1.
-            counts (array-like): incident count values corresponding to each Q
-                point. Currently unused.
             show (bool): whether to display the plot immediately.
             ax (matplotlib.axes.Axes): optional axes object to draw on.
+            min_sensitivity (float): optional minimum sensitivity value to be
+                plotted, defaults to 1e-20. This avoids zero on a log plot.
 
         Returns:
             matplotlib.axes.Axes: the axes containing the sensitivity profile.
@@ -308,9 +302,9 @@ class BaseSample(VariableAngle):
                 axis=1,
             )
 
-            sensitivity /= np.clip(
-                np.abs(reflectivity),
-                1e-30,
+            sensitivity = np.clip(
+                np.abs(sensitivity),
+                min_sensitivity,
                 None,
             )
 
@@ -363,7 +357,6 @@ class BaseSample(VariableAngle):
     @abstractmethod
     def nested_sampling(self):
         """Runs nested sampling on measured or simulated data of the sample."""
-        pass
 
 
 class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
@@ -380,7 +373,6 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
     @abstractmethod
     def _create_objectives(self):
         """Loads the measured data for the lipid sample."""
-        pass
 
     def angle_info(self, angle_times, contrasts=None,
                    inst_or_path='OFFSPEC'):
@@ -478,13 +470,12 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         # Exclude certain parameters if underlayers are being used.
         if underlayers is None:
             return Fisher(qs, self.params, counts, models)
-        else:
-            return Fisher(qs, self.underlayer_params, counts, models)
+
+        return Fisher(qs, self.underlayer_params, counts, models)
 
     @abstractmethod
     def _using_conditions(self):
         """Creates a structure describing the given measurement conditions."""
-        pass
 
     def sld_profile(self,
                     save_path: str,
@@ -517,8 +508,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             zsteps = 500
             ax.plot(*structure.sld_profile(np.linspace(zmin, zmax, zsteps)))
 
-        x_label = '$\mathregular{Distance\ (\AA)}$'
-        y_label = '$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
+        x_label = r'$\mathregular{Distance\ (\AA)}$'
+        y_label = r'$\mathregular{SLD\ (10^{-6} \AA^{-2})}$'
         ax.set_xlabel(x_label, fontsize=11, weight='bold')
         ax.set_ylabel(y_label, fontsize=11, weight='bold')
 
@@ -535,7 +526,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         save_plot(fig, save_path, filename)
 
     def reflectivity_profile(self,
-                             save_path: str,
+                             save_path: str = None,
                              filename: str = 'reflectivity_profile') -> None:
         """Plots the reflectivity profile of the lipid sample.
 
@@ -571,8 +562,8 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
                         color=colours[i], label=label)
             ax.plot(q, r_model, color=colours[i], zorder=20)
 
-        x_label = '$\\mathregular{Q\\ (Å^{-1})}$'
-        y_label = 'Reflectivity (arb.)'
+        x_label = r'$\\mathregular{Q\\ (Å^{-1})}$'
+        y_label = r'Reflectivity (arb.)'
 
         ax.set_xlabel(x_label, fontsize=11, weight='bold')
         ax.set_ylabel(y_label, fontsize=11, weight='bold')
@@ -583,9 +574,10 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
         if len(self.structures) > 1:
             ax.legend()
 
-        # Save the plot.
-        save_path = os.path.join(save_path, self.name)
-        save_plot(fig, save_path, filename)
+        # Save the plot if save_path is defined
+        if save_path is not None:
+            save_path = os.path.join(save_path, self.name)
+            save_plot(fig, save_path, filename)
 
     def nested_sampling(self,
                         contrasts: list,
@@ -632,7 +624,7 @@ class BaseLipid(BaseSample, VariableContrast, VariableUnderlayer):
             )
             data = SimulateReflectivity(model, angle_times,
                                         inst_or_path).simulate()
-            
+
             # filter zeros as nested sampling doesn't deal with these well
             data = data[:, (data[1] != 0)]
 
