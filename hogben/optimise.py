@@ -124,6 +124,7 @@ class Optimiser:
                           or the path to a direct beam file, defaults to
                           'OFFSPEC'
             seed (int, optional): random seed for reproducible behaviour.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised angles, counting times and the corresponding
@@ -175,7 +176,8 @@ class Optimiser:
                            contrast_bounds: tuple = (-0.56, 6.36),
                            workers: int = -1,
                            verbose: bool = True,
-                           inst_or_path: str = 'OFFSPEC') -> tuple:
+                           inst_or_path: str = 'OFFSPEC',
+                           seed: Optional[int] = None) -> tuple:
         """Finds the optimal contrasts, given a fixed time budget.
 
         Args:
@@ -189,6 +191,8 @@ class Optimiser:
             inst_or_path: either the name of an instrument already in HOGBEN,
                           or the path to a direct beam file, defaults to
                           'OFFSPEC'
+            seed (int, optional): Random seed for reproducible results.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised contrast SLDs, counting time proportions and the
@@ -310,7 +314,8 @@ class Optimiser:
                              sld_bounds=(1, 9),
                              workers=-1,
                              verbose=True,
-                             inst_or_path='OFFSPEC') -> tuple:
+                             inst_or_path='OFFSPEC',
+                             seed: Optional[int] = None) -> tuple:
         """Finds the optimal underlayer thicknesses and SLDs of a sample.
 
         Args:
@@ -325,6 +330,8 @@ class Optimiser:
             inst_or_path: either the name of an instrument already in HOGBEN,
                           or the path to a direct beam file, defaults to
                           'OFFSPEC'
+            seed (int, optional): Random seed for reproducible results.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised underlayer thicknesses and SLD, and the
@@ -475,6 +482,7 @@ class Optimiser:
                            `workers=-1` to use all available cores.
             verbose (bool): whether to display progress or not.
             seed (int, optional): Random seed for reproducible results.
+                                  Defaults to None.
 
         Returns:
             tuple: optimised experimental conditions and function value.
