@@ -233,8 +233,8 @@ class Optimiser:
 
         # Optimise contrasts and counting time splits, and return the results.
         res, val = Optimiser.__optimise(
-            self._contrasts_func, bounds, constraints, args, workers, verbose
-        )
+            self._contrasts_func, bounds, constraints, args, workers, verbose,
+            seed)
         return res[:num_contrasts], res[num_contrasts:], val
 
     def optimise_parameters(self,
@@ -352,8 +352,8 @@ class Optimiser:
 
         # Optimise underlayer thicknesses and SLDs, and return the results.
         res, val = Optimiser.__optimise(
-            self._underlayers_func, bounds, [], args, workers, verbose
-        )
+            self._underlayers_func, bounds, [], args, workers, verbose,
+            seed)
         return res[:num_underlayers], res[num_underlayers:], val
 
     def _angle_times_func(self,
